@@ -23,7 +23,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <header className="bg-white shadow-sm border-b border-gray-200">
+            <header className="fixed top-0 left-0 right-0 bg-white shadow-sm border-b border-gray-200 z-50">
                 <div className="px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 gap-4">
                         <div className="shrink-0">
@@ -72,7 +72,21 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 </div>
             </header>
 
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pt-16">{children}</main>
+
+            <footer className="bg-primary text-white">
+                <div className="px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.</p>
+
+                        <div className="flex gap-4">
+                            <Link href="#" className="text-sm hover:underline">Privacy</Link>
+                            <Link href="#" className="text-sm hover:underline">Terms</Link>
+                            <Link href="#" className="text-sm hover:underline">Contact</Link>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 };
