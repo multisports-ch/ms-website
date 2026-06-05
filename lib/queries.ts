@@ -5,12 +5,14 @@ import {
     committeeMembers,
     seasonLeaderboard,
     seasons,
+    news,
     events,
     eventResults,
+    eventSignups,
     users,
     guests
 } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, gte, and, desc } from "drizzle-orm";
 
 export const getContentBlock = unstable_cache(
     async (id: string) => {
@@ -107,4 +109,48 @@ export const getMemberEventPoints = unstable_cache(
     },
     ["member-event-points"],
     { revalidate: 3600, tags: ["leaderboard"] }
+);
+
+export const getUpcomingEvents = unstable_cache(
+    async (seasonId: string) => {
+        const now = new Date();
+        return db
+            .select()
+            .from(events)
+            .where(and(eq(events.seasonId, seasonId), gte(events.date, now)))
+            .orderBy(events.date);
+    },
+    ["upcoming-events"],
+    { revalidate: 3600, tags: ["events"] }
+);
+
+export const getSeasonEventsAll = unstable_cache(
+    async (seasonId: string) => {
+        return db.select().from(events).where(eq(events.seasonId, seasonId)).orderBy(events.date);
+    },
+    ["season-events-all"],
+    { revalidate: 3600, tags: ["events"] }
+);
+
+export const getVisibleNews = unstable_cache(
+    async () => {
+        return db.query.news.findMany({
+            where: eq(news.visible, true),
+            with: {
+                images: { orderBy: (i, { asc }) => [asc(i.order)] }
+            },
+            orderBy: (news, { desc }) => [desc(news.publishedAt)]
+        });
+    },
+    ["visible-news"],
+    { revalidate: 3600, tags: ["news"] }
+);
+
+export const getEventSignupCount = unstable_cache(
+    async (eventId: string) => {
+        const signups = await db.select().from(eventSignups).where(eq(eventSignups.eventId, eventId));
+        return signups.length;
+    },
+    ["event-signup-count"],
+    { revalidate: 60, tags: ["signups"] }
 );

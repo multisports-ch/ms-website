@@ -5,6 +5,11 @@ export default auth((req) => {
     const { pathname } = req.nextUrl;
     const role = req.auth?.user?.role;
 
+    // Redirect admin away from member dashboard
+    if (pathname.startsWith("/dashboard") && role === "admin") {
+        return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+    }
+
     // Protect admin routes
     if (pathname.startsWith("/admin")) {
         if (!req.auth) {
@@ -16,7 +21,7 @@ export default auth((req) => {
     }
 
     // Protect member routes
-    if (pathname.startsWith("/member")) {
+    if (pathname.startsWith("/dashboard")) {
         if (!req.auth) {
             return NextResponse.redirect(new URL("/login", req.url));
         }
@@ -26,5 +31,5 @@ export default auth((req) => {
 });
 
 export const config = {
-    matcher: ["/admin/:path*", "/member/:path*"]
+    matcher: ["/admin/:path*", "/dashboard/:path*"]
 };

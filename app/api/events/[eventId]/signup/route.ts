@@ -4,7 +4,8 @@ import { eventSignups, events } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: { eventId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
+    const { eventId } = await params;
     const session = await auth();
     if (!session) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -14,11 +15,11 @@ export async function GET(req: NextRequest, { params }: { params: { eventId: str
     const signup = await db
         .select()
         .from(eventSignups)
-        .where(and(eq(eventSignups.eventId, params.eventId), eq(eventSignups.userId, session.user.id)))
+        .where(and(eq(eventSignups.eventId, eventId), eq(eventSignups.userId, session.user.id)))
         .limit(1);
 
     // Get total signup count
-    const all = await db.select().from(eventSignups).where(eq(eventSignups.eventId, params.eventId));
+    const all = await db.select().from(eventSignups).where(eq(eventSignups.eventId, eventId));
 
     return NextResponse.json({
         isSignedUp: signup.length > 0,
@@ -26,14 +27,15 @@ export async function GET(req: NextRequest, { params }: { params: { eventId: str
     });
 }
 
-export async function POST(req: NextRequest, { params }: { params: { eventId: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
+    const { eventId } = await params;
     const session = await auth();
     if (!session) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Check event exists
-    const event = await db.select().from(events).where(eq(events.id, params.eventId)).limit(1);
+    const event = await db.select().from(events).where(eq(events.id, eventId)).limit(1);
 
     if (!event[0]) {
         return NextResponse.json({ error: "Event not found" }, { status: 404 });
@@ -43,7 +45,7 @@ export async function POST(req: NextRequest, { params }: { params: { eventId: st
     const existing = await db
         .select()
         .from(eventSignups)
-        .where(and(eq(eventSignups.eventId, params.eventId), eq(eventSignups.userId, session.user.id)))
+        .where(and(eq(eventSignups.eventId, eventId), eq(eventSignups.userId, session.user.id)))
         .limit(1);
 
     if (existing[0]) {
@@ -51,14 +53,15 @@ export async function POST(req: NextRequest, { params }: { params: { eventId: st
     }
 
     await db.insert(eventSignups).values({
-        eventId: params.eventId,
+        eventId: eventId,
         userId: session.user.id
     });
 
     return NextResponse.json({ success: true });
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { eventId: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
+    const { eventId } = await params;
     const session = await auth();
     if (!session) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -66,7 +69,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { eventId: 
 
     await db
         .delete(eventSignups)
-        .where(and(eq(eventSignups.eventId, params.eventId), eq(eventSignups.userId, session.user.id)));
+        .where(and(eq(eventSignups.eventId, eventId), eq(eventSignups.userId, session.user.id)));
 
     return NextResponse.json({ success: true });
 }

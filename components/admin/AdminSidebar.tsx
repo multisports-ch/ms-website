@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import SignOutButton from "@/components/shared/SignOutButton";
 
 const navItems = [
     { label: "Dashboard", href: "/admin/dashboard" },
@@ -39,12 +39,7 @@ export default function AdminSidebar({ user }: { user: { name?: string | null; e
             </nav>
 
             <div className="p-4 border-t">
-                <button
-                    onClick={() => signOut({ callbackUrl: "/login" })}
-                    className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left"
-                >
-                    Sign out
-                </button>
+                <SignOutButton />
             </div>
         </aside>
     );

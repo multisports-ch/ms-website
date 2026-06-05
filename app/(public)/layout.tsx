@@ -107,7 +107,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
                                     Instagram
                                 </Link>
                                 <Link href="https://www.tiktok.com/@ms.multisports" target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 text-sm font-medium text-gray-100 hover:opacity-90">
-                                    <Image src="/icons/tiktok-logo.png" alt="TikTok" width={24} height={24} className="h-6 w-6 object-contain" />
+                                    <Image src="/icons/tiktok-logo.svg" alt="TikTok" width={24} height={24} className="h-6 w-6 object-contain" />
                                     TikTok
                                 </Link>
                             </div>

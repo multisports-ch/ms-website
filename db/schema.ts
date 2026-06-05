@@ -17,14 +17,6 @@ export const users = pgTable("users", {
     createdAt: timestamp("created_at").defaultNow().notNull()
 });
 
-export const sessions = pgTable("sessions", {
-    sessionToken: text("session_token").primaryKey(),
-    userId: text("user_id")
-        .notNull()
-        .references(() => users.id, { onDelete: "cascade" }),
-    expires: timestamp("expires", { mode: "date" }).notNull()
-});
-
 // ============================================================
 // CONTENT BLOCKS
 // ============================================================
@@ -156,6 +148,31 @@ export const seasonLeaderboard = pgTable("season_leaderboard", {
 });
 
 // ============================================================
+// NEWS
+// ============================================================
+export const news = pgTable("news", {
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
+    title: text("title").notNull(),
+    body: text("body"),
+    publishedAt: timestamp("published_at").defaultNow().notNull(),
+    visible: boolean("visible").notNull().default(true)
+});
+
+export const newsImages = pgTable("news_images", {
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
+    newsId: text("news_id")
+        .notNull()
+        .references(() => news.id, { onDelete: "cascade" }),
+    imageUrl: text("image_url").notNull(),
+    imageFileId: text("image_file_id"),
+    order: integer("order").notNull().default(0)
+});
+
+// ============================================================
 // JOIN PAGE DOCUMENTS
 // ============================================================
 
@@ -209,6 +226,10 @@ export const eventSignupsRelations = relations(eventSignups, ({ one }) => ({
         fields: [eventSignups.userId],
         references: [users.id]
     }),
+    guest: one(guests, {
+        fields: [eventSignups.guestId],
+        references: [guests.id]
+    }),
     event: one(events, {
         fields: [eventSignups.eventId],
         references: [events.id]
@@ -237,4 +258,15 @@ export const seasonLeaderboardRelations = relations(seasonLeaderboard, ({ one })
         fields: [seasonLeaderboard.userId],
         references: [users.id]
     })
+}));
+
+export const newsImagesRelations = relations(newsImages, ({ one }) => ({
+    news: one(news, {
+        fields: [newsImages.newsId],
+        references: [news.id]
+    })
+}));
+
+export const newsRelations = relations(news, ({ many }) => ({
+    images: many(newsImages)
 }));
