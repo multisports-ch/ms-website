@@ -154,3 +154,12 @@ export const getEventSignupCount = unstable_cache(
     ["event-signup-count"],
     { revalidate: 60, tags: ["signups"] }
 );
+
+export const getJoinPageContent = unstable_cache(
+    async () => {
+        const blocks = await db.select().from(contentBlocks).where(eq(contentBlocks.page, "join"));
+        return Object.fromEntries(blocks.map((b) => [b.id, b]));
+    },
+    ["join-content"],
+    { revalidate: 3600, tags: ["content-blocks"] }
+);

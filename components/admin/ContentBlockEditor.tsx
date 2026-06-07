@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ImageUploader from "./ImageUploader";
+import FileUploader from "./FileUploader";
 
 interface ContentBlock {
     id: string;
@@ -10,6 +11,8 @@ interface ContentBlock {
     imageUrl?: string | null;
     imageFileId?: string | null;
     imageAlt?: string | null;
+    fileUrl?: string | null;
+    fileFileId?: string | null;
 }
 
 interface Props {
@@ -21,8 +24,13 @@ export default function ContentBlockEditor({ block }: Props) {
     const [imageUrl, setImageUrl] = useState(block.imageUrl ?? "");
     const [imageFileId, setImageFileId] = useState(block.imageFileId ?? "");
     const [imageAlt, setImageAlt] = useState(block.imageAlt ?? "");
+    const [fileUrl, setFileUrl] = useState(block.fileUrl ?? "");
+    const [fileFileId, setFileFileId] = useState(block.fileFileId ?? "");
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
+
+    const isImageBlock = block.id.includes("image");
+    const isFileBlock = block.id.includes("doc") || block.id.includes("file");
 
     async function handleSave() {
         setSaving(true);
@@ -35,7 +43,9 @@ export default function ContentBlockEditor({ block }: Props) {
                 text: text || undefined,
                 imageUrl: imageUrl || undefined,
                 imageFileId: imageFileId || undefined,
-                imageAlt: imageAlt || undefined
+                imageAlt: imageAlt || undefined,
+                fileUrl: fileUrl || undefined,
+                fileFileId: fileFileId || undefined
             })
         });
 
@@ -44,8 +54,6 @@ export default function ContentBlockEditor({ block }: Props) {
         setTimeout(() => setSaved(false), 2000);
     }
 
-    const isImageBlock = block.id.includes("image");
-
     return (
         <div className="bg-white rounded-xl shadow p-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
@@ -53,7 +61,17 @@ export default function ContentBlockEditor({ block }: Props) {
                 <span className="text-xs text-gray-400 font-mono">{block.id}</span>
             </div>
 
-            {isImageBlock ? (
+            {isFileBlock ? (
+                <FileUploader
+                    currentUrl={fileUrl || null}
+                    currentFileId={fileFileId || null}
+                    onUpload={(url, fileId) => {
+                        setFileUrl(url);
+                        setFileFileId(fileId);
+                    }}
+                    folder="/documents"
+                />
+            ) : isImageBlock ? (
                 <div className="flex flex-col gap-2">
                     <ImageUploader
                         currentUrl={imageUrl}
@@ -68,7 +86,7 @@ export default function ContentBlockEditor({ block }: Props) {
                         type="text"
                         value={imageAlt}
                         onChange={(e) => setImageAlt(e.target.value)}
-                        placeholder="Image alt text (for accessibility)"
+                        placeholder="Texte alternatif (accessibilité)"
                         className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
@@ -78,7 +96,7 @@ export default function ContentBlockEditor({ block }: Props) {
                     onChange={(e) => setText(e.target.value)}
                     rows={4}
                     className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-                    placeholder="Enter content..."
+                    placeholder="Entrez le contenu..."
                 />
             )}
 
@@ -87,7 +105,7 @@ export default function ContentBlockEditor({ block }: Props) {
                 disabled={saving}
                 className="self-end px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
-                {saving ? "Saving..." : saved ? "✓ Saved" : "Save"}
+                {saving ? "Enregistrement..." : saved ? "✓ Enregistré" : "Enregistrer"}
             </button>
         </div>
     );

@@ -8,6 +8,7 @@ interface Member {
     id: string;
     name: string;
     role: string;
+    description: string | null;
     photoUrl?: string | null;
     order: number;
 }
@@ -28,7 +29,7 @@ export default function AdminCommitteePage() {
     }, []);
 
     async function handleDelete(id: string) {
-        if (!confirm("Delete this member?")) return;
+        if (!confirm("Supprimer ce membre ?")) return;
         await fetch("/api/admin/committee", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
@@ -46,18 +47,18 @@ export default function AdminCommitteePage() {
     return (
         <div>
             <div className="flex items-center justify-between mb-8">
-                <h1 className="text-2xl font-bold text-gray-800">Committee Members</h1>
+                <h1 className="text-2xl font-bold text-gray-800">Membres du comité</h1>
                 <button
                     onClick={() => setAdding(true)}
                     className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                    + Add member
+                    + Ajouter un membre
                 </button>
             </div>
 
             {adding && (
                 <div className="bg-white rounded-xl shadow p-6 mb-6">
-                    <h2 className="font-semibold text-gray-800 mb-4">New Member</h2>
+                    <h2 className="font-semibold text-gray-800 mb-4">Nouveau membre</h2>
                     <CommitteeMemberForm onSave={handleSaved} onCancel={() => setAdding(false)} />
                 </div>
             )}
@@ -92,13 +93,13 @@ export default function AdminCommitteePage() {
                                         onClick={() => setEditing(member)}
                                         className="px-3 py-1 text-xs border rounded-lg hover:bg-gray-50 transition-colors"
                                     >
-                                        Edit
+                                        Modifier
                                     </button>
                                     <button
                                         onClick={() => handleDelete(member.id)}
                                         className="px-3 py-1 text-xs border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
                                     >
-                                        Delete
+                                        Supprimer
                                     </button>
                                 </div>
                             </div>

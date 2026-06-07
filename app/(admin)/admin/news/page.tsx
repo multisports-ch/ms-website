@@ -4,15 +4,18 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import NewsEventForm from "@/components/admin/NewsEventForm";
 
+interface NewsImage {
+    id: string;
+    imageUrl: string;
+    imageFileId?: string | null;
+    order: number;
+}
+
 interface NewsEvent {
     id: string;
     title: string;
-    type: "news" | "event";
     body?: string | null;
-    imageUrl?: string | null;
-    imageFileId?: string | null;
-    imageAlt?: string | null;
-    eventDate?: string | null;
+    images?: NewsImage[];
     visible: boolean;
     publishedAt: string;
 }
@@ -33,12 +36,12 @@ export default function AdminNewsPage() {
     }, []);
 
     async function handleDelete(item: NewsEvent) {
-        if (!confirm(`Delete "${item.title}"?`)) return;
+        if (!confirm(`Supprimer "${item.title}" ?`)) return;
 
         await fetch("/api/admin/news", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: item.id, imageFileId: item.imageFileId })
+            body: JSON.stringify({ id: item.id })
         });
         load();
     }
@@ -52,18 +55,18 @@ export default function AdminNewsPage() {
     return (
         <div>
             <div className="flex items-center justify-between mb-8">
-                <h1 className="text-2xl font-bold text-gray-800">News & Events</h1>
+                <h1 className="text-2xl font-bold text-gray-800">Actualités</h1>
                 <button
                     onClick={() => setAdding(true)}
                     className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                    + Add item
+                    + Ajouter une actualité
                 </button>
             </div>
 
             {adding && (
                 <div className="bg-white rounded-xl shadow p-6 mb-6">
-                    <h2 className="font-semibold text-gray-800 mb-4">New Item</h2>
+                    <h2 className="font-semibold text-gray-800 mb-4">Nouvelle actualité</h2>
                     <NewsEventForm onSave={handleSaved} onCancel={() => setAdding(false)} />
                 </div>
             )}
@@ -74,54 +77,43 @@ export default function AdminNewsPage() {
                         {editing?.id === item.id ? (
                             <NewsEventForm initial={editing} onSave={handleSaved} onCancel={() => setEditing(null)} />
                         ) : (
-                            <div className="flex gap-4">
-                                {item.imageUrl && (
-                                    <div className="relative w-24 h-24 rounded-lg overflow-hidden shrink-0">
+                            <div className="flex gap-4 items-start">
+                                {item.images && item.images.length > 0 && (
+                                    <div className="relative w-28 h-28 rounded-lg overflow-hidden shrink-0">
                                         <Image
-                                            src={item.imageUrl}
-                                            alt={item.imageAlt ?? item.title}
+                                            src={item.images[0].imageUrl}
+                                            alt={item.title}
                                             fill
                                             className="object-cover"
                                         />
+                                        {item.images.length > 1 && (
+                                            <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[11px] px-2 py-0.5 rounded-full">
+                                                +{item.images.length - 1}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span
-                                            className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                                                item.type === "event"
-                                                    ? "bg-purple-100 text-purple-700"
-                                                    : "bg-blue-100 text-blue-700"
-                                            }`}
-                                        >
-                                            {item.type}
+                                    {!item.visible && (
+                                        <span className="inline-flex text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 mb-2">
+                                            caché
                                         </span>
-                                        {!item.visible && (
-                                            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
-                                                hidden
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p className="font-semibold text-gray-800">{item.title}</p>
-                                    {item.eventDate && (
-                                        <p className="text-sm text-gray-500 mt-0.5">
-                                            {new Date(item.eventDate).toLocaleDateString()}
-                                        </p>
                                     )}
-                                    {item.body && <p className="text-sm text-gray-400 mt-1 truncate">{item.body}</p>}
+                                    <p className="font-semibold text-gray-800 text-lg">{item.title}</p>
+                                    {item.body && <p className="text-sm text-gray-500 mt-2 line-clamp-3">{item.body}</p>}
                                 </div>
                                 <div className="flex gap-2 shrink-0">
                                     <button
                                         onClick={() => setEditing(item)}
                                         className="px-3 py-1 text-xs border rounded-lg hover:bg-gray-50 transition-colors"
                                     >
-                                        Edit
+                                        Modifier
                                     </button>
                                     <button
                                         onClick={() => handleDelete(item)}
                                         className="px-3 py-1 text-xs border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
                                     >
-                                        Delete
+                                        Supprimer
                                     </button>
                                 </div>
                             </div>
@@ -131,7 +123,7 @@ export default function AdminNewsPage() {
 
                 {items.length === 0 && !adding && (
                     <div className="text-center py-16 text-gray-400">
-                        No news or events yet. Click "+ Add item" to create one.
+                        Aucune actualité pour le moment. Cliquez sur "+ Ajouter une actualité" pour en créer une.
                     </div>
                 )}
             </div>

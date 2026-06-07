@@ -51,24 +51,24 @@ export default function CommitteeMemberForm({ initial, onSave, onCancel }: Props
     return (
         <div className="flex flex-col gap-4">
             <div>
-                <label className="block text-sm font-medium mb-1">Name</label>
+                <label className="block text-sm font-medium mb-1">Nom</label>
                 <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g. Jean Dupont"
+                    placeholder="ex. Jean Dupont"
                 />
             </div>
 
             <div>
-                <label className="block text-sm font-medium mb-1">Role</label>
+                <label className="block text-sm font-medium mb-1">Fonction</label>
                 <input
                     type="text"
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g. President"
+                    placeholder="ex. Président"
                 />
             </div>
 
@@ -79,12 +79,12 @@ export default function CommitteeMemberForm({ initial, onSave, onCancel }: Props
                     onChange={(e) => setDescription(e.target.value)}
                     rows={2}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-                    placeholder="Short bio or description..."
+                    placeholder="Biographie courte ou description..."
                 />
             </div>
 
             <div>
-                <label className="block text-sm font-medium mb-1">Display Order</label>
+                <label className="block text-sm font-medium mb-1">Ordre d'affichage</label>
                 <input
                     type="number"
                     value={order}
@@ -111,14 +111,14 @@ export default function CommitteeMemberForm({ initial, onSave, onCancel }: Props
                     onClick={onCancel}
                     className="px-4 py-2 text-sm rounded-lg border hover:bg-gray-50 transition-colors"
                 >
-                    Cancel
+                    Annuler
                 </button>
                 <button
                     onClick={handleSave}
                     disabled={saving || !name || !role}
                     className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
                 >
-                    {saving ? "Saving..." : "Save"}
+                    {saving ? "Enregistrement..." : "Enregistrer"}
                 </button>
             </div>
         </div>

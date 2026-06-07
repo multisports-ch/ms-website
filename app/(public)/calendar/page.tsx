@@ -133,15 +133,9 @@ export default async function CalendarPage() {
             {newsItems.length > 0 && (
                 <section>
                     <h2 className="text-2xl font-black text-foreground mb-6">Actualités</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {newsItems.map((item) => (
-                            <NewsCard
-                                key={item.id}
-                                item={{
-                                    ...item,
-                                    publishedAt: item.publishedAt.toISOString()
-                                }}
-                            />
+                            <NewsCard key={item.id} item={item} />
                         ))}
                     </div>
                 </section>

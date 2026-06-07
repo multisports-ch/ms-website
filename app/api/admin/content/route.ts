@@ -12,12 +12,10 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id, text, imageUrl, imageFileId, imageAlt } = await req.json();
+    const { id, text, imageUrl, imageFileId, imageAlt, fileUrl, fileFileId } = await req.json();
 
-    // If a new image is being set, delete the old one first
     if (imageFileId) {
         const existing = await db.select().from(contentBlocks).where(eq(contentBlocks.id, id)).limit(1);
-
         await deleteImageKitFile(existing[0]?.imageFileId);
     }
 
@@ -28,6 +26,8 @@ export async function PATCH(req: NextRequest) {
             ...(imageUrl !== undefined && { imageUrl }),
             ...(imageFileId !== undefined && { imageFileId }),
             ...(imageAlt !== undefined && { imageAlt }),
+            ...(fileUrl !== undefined && { fileUrl }),
+            ...(fileFileId !== undefined && { fileFileId }),
             updatedAt: new Date()
         })
         .where(eq(contentBlocks.id, id));

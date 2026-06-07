@@ -212,7 +212,8 @@ export default function AdminMembersPage() {
                     {admins.length === 0 ? (
                         <p className="text-sm text-gray-400 text-center py-8">Aucun administrateur.</p>
                     ) : (
-                        <table className="w-full text-sm">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
                                     <th className="px-5 py-3 text-left">Nom</th>
@@ -247,6 +248,7 @@ export default function AdminMembersPage() {
                                 ))}
                             </tbody>
                         </table>
+                        </div>
                     )}
                 </div>
             </section>
@@ -260,7 +262,8 @@ export default function AdminMembersPage() {
                     {members.length === 0 ? (
                         <p className="text-sm text-gray-400 text-center py-8">Aucun membre.</p>
                     ) : (
-                        <table className="w-full text-sm">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
                                     <th className="px-5 py-3 text-left">Nom</th>
@@ -295,6 +298,7 @@ export default function AdminMembersPage() {
                                 ))}
                             </tbody>
                         </table>
+                        </div>
                     )}
                 </div>
             </section>

@@ -29,8 +29,10 @@ export const contentBlocks = pgTable("content_blocks", {
     imageUrl: text("image_url"),
     imageFileId: text("image_file_id"),
     imageAlt: text("image_alt"),
+    fileUrl: text("file_url"),       // add this
+    fileFileId: text("file_file_id"), // add this
     updatedAt: timestamp("updated_at").defaultNow().notNull()
-});
+})
 
 // ============================================================
 // COMMITTEE MEMBERS
@@ -170,21 +172,6 @@ export const newsImages = pgTable("news_images", {
     imageUrl: text("image_url").notNull(),
     imageFileId: text("image_file_id"),
     order: integer("order").notNull().default(0)
-});
-
-// ============================================================
-// JOIN PAGE DOCUMENTS
-// ============================================================
-
-export const joinDocuments = pgTable("join_documents", {
-    id: text("id")
-        .primaryKey()
-        .$defaultFn(() => crypto.randomUUID()),
-    label: text("label").notNull(),
-    fileUrl: text("file_url").notNull(),
-    fileType: text("file_type"),
-    order: integer("order").notNull().default(0),
-    createdAt: timestamp("created_at").defaultNow().notNull()
 });
 
 // ============================================================

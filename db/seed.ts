@@ -8,20 +8,17 @@ async function main() {
         .values([
             // Home page
             { id: "home_hero_title", page: "home", label: "Hero Title" },
-            { id: 'home_hero_subtitle', page: 'home', label: 'Hero Subtitle' },
+            { id: "home_hero_subtitle", page: "home", label: "Hero Subtitle" },
             { id: "home_hero_image", page: "home", label: "Hero Image" },
             { id: "home_about_text", page: "home", label: "About Section Text" },
-            { id: "home_about_image", page: "home", label: "About Section Image" },
-
-            // Calendar page
-            { id: "calendar_intro_text", page: "calendar", label: "Calendar Intro Text" },
-
             // Join page
-            { id: "join_intro_text", page: "join", label: "Join Page Intro Text" },
-            { id: "join_instructions", page: "join", label: "Join Instructions" },
-
-            // Contact page
-            { id: "contact_intro_text", page: "contact", label: "Contact Page Intro Text" }
+            // Join page
+            { id: "join_inscriptions_list", page: "join", label: "Inscriptions — liste" },
+            { id: "join_conditions_list", page: "join", label: "Conditions — liste" },
+            { id: "join_rules_left", page: "join", label: "Règles du Multisport — liste" },
+            { id: "join_rules_right_doc", page: "join", label: "Règles complètes (PDF)" },
+            { id: "join_doc_formulaire", page: "join", label: "Formulaire d'inscription (PDF)" },
+            { id: "join_doc_statuts", page: "join", label: "Statuts de l'association (PDF)" }
         ])
         .onConflictDoNothing();
 

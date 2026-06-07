@@ -5,31 +5,33 @@ import { usePathname } from "next/navigation";
 import SignOutButton from "@/components/shared/SignOutButton";
 
 const navItems = [
-    { label: "Dashboard", href: "/admin/dashboard" },
-    { label: "Content", href: "/admin/content" },
-    { label: "Committee", href: "/admin/committee" },
-    { label: "News & Events", href: "/admin/news" },
-    { label: "Leaderboard", href: "/admin/leaderboard" },
-    { label: "Documents", href: "/admin/documents" },
-    { label: "Members", href: "/admin/members" }
+    { label: "Tableau de bord", href: "/admin/dashboard" },
+    { label: "Contenu", href: "/admin/content" },
+    { label: "Comité", href: "/admin/committee" },
+    { label: "Actualités", href: "/admin/news" },
+    { label: "Saisons & Classement", href: "/admin/leaderboard" },
+    { label: "Membres", href: "/admin/members" },
+    { label: "Contact", href: "/admin/contact" }
 ];
 
 export default function AdminSidebar({ user }: { user: { name?: string | null; email?: string | null } }) {
     const pathname = usePathname();
 
     return (
-        <aside className="w-64 min-h-screen bg-white shadow flex flex-col">
-            <div className="p-6 border-b">
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Admin Panel</p>
-                <p className="font-semibold text-gray-800 mt-1 truncate">{user.name ?? user.email}</p>
+        <aside className="w-full md:w-64 bg-white shadow flex flex-col md:min-h-screen">
+            <div className="flex items-center justify-between gap-4 p-4 border-b md:flex-col md:items-start">
+                <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">Espace admin</p>
+                    <p className="font-semibold text-gray-800 mt-1 truncate">{user.name ?? user.email}</p>
+                </div>
             </div>
 
-            <nav className="flex-1 p-4 flex flex-col gap-1">
+            <nav className="flex flex-row md:flex-col flex-wrap gap-1 p-3 overflow-x-auto">
                 {navItems.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                             pathname === item.href ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-100"
                         }`}
                     >

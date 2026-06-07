@@ -6,12 +6,12 @@ import { eq, and, gte } from "drizzle-orm";
 import ChangePasswordForm from "@/components/shared/ChangePasswordForm";
 
 const cards = [
-    { label: "Content Blocks", href: "/admin/content", description: "Éditer les textes et images" },
+    { label: "Blocs de contenu", href: "/admin/content", description: "Éditer les textes et images" },
     { label: "Comité", href: "/admin/committee", description: "Gérer les membres du comité" },
     { label: "Actualités", href: "/admin/news", description: "Créer et éditer les actualités" },
-    { label: "Leaderboard", href: "/admin/leaderboard", description: "Gérer les classements" },
-    { label: "Documents", href: "/admin/documents", description: "Gérer les fichiers" },
-    { label: "Comptes", href: "/admin/members", description: "Gérer les membres" }
+    { label: "Saison + Classement", href: "/admin/leaderboard", description: "Gérer les saisons et résultats" },
+    { label: "Membres", href: "/admin/members", description: "Gérer les membres" },
+    { label: "Contact", href: "/admin/contact", description: "Voir et répondre aux messages de contact" }
 ];
 
 async function getUpcomingSignups() {
@@ -69,7 +69,7 @@ export default async function AdminDashboardPage() {
             </div>
 
             {/* Quick nav cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {cards.map((card) => (
                     <Link
                         key={card.href}

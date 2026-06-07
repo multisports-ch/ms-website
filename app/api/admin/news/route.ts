@@ -7,7 +7,6 @@ import { revalidateTag } from "next/cache";
 
 export async function GET() {
     const items = await db.query.news.findMany({
-        where: eq(news.visible, true),
         with: { images: { orderBy: (i, { asc }) => [asc(i.order)] } },
         orderBy: (news, { desc }) => [desc(news.publishedAt)]
     });
@@ -31,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     if (images?.length > 0) {
         await db.insert(newsImages).values(
-            images.map((img: any, index: number) => ({
+            images.slice(0, 10).map((img: any, index: number) => ({
                 newsId: newsItem.id,
                 imageUrl: img.imageUrl,
                 imageFileId: img.imageFileId ?? null,
@@ -39,6 +38,7 @@ export async function POST(req: NextRequest) {
             }))
         );
     }
+
     revalidateTag("news", "default");
     return NextResponse.json(newsItem);
 }
@@ -49,7 +49,7 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id, title, body, visible } = await req.json();
+    const { id, title, body, visible, images } = await req.json();
 
     await db
         .update(news)
@@ -59,6 +59,21 @@ export async function PATCH(req: NextRequest) {
             ...(visible !== undefined && { visible })
         })
         .where(eq(news.id, id));
+
+    if (images) {
+        await db.delete(newsImages).where(eq(newsImages.newsId, id));
+        if (images.length > 0) {
+            await db.insert(newsImages).values(
+                images.slice(0, 10).map((img: any, index: number) => ({
+                    newsId: id,
+                    imageUrl: img.imageUrl,
+                    imageFileId: img.imageFileId ?? null,
+                    order: index
+                }))
+            );
+        }
+    }
+
     revalidateTag("news", "default");
     return NextResponse.json({ success: true });
 }
