@@ -29,10 +29,10 @@ export const contentBlocks = pgTable("content_blocks", {
     imageUrl: text("image_url"),
     imageFileId: text("image_file_id"),
     imageAlt: text("image_alt"),
-    fileUrl: text("file_url"),       // add this
+    fileUrl: text("file_url"), // add this
     fileFileId: text("file_file_id"), // add this
     updatedAt: timestamp("updated_at").defaultNow().notNull()
-})
+});
 
 // ============================================================
 // COMMITTEE MEMBERS
@@ -187,6 +187,18 @@ export const contactSubmissions = pgTable("contact_submissions", {
     message: text("message").notNull(),
     submittedAt: timestamp("submitted_at").defaultNow().notNull(),
     read: boolean("read").notNull().default(false)
+});
+
+export const passwordResetTokens = pgTable("password_reset_tokens", {
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    token: text("token").notNull().unique(),
+    expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+    usedAt: timestamp("used_at", { mode: "date" })
 });
 
 // ============================================================

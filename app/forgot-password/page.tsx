@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-type Status = "idle" | "sending" | "sent";
+type Status = "idle" | "sending" | "sent" | "error";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
@@ -13,9 +13,14 @@ export default function ForgotPasswordPage() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setStatus("sending");
-        // TODO: wire up email service
-        await new Promise((r) => setTimeout(r, 1000));
-        setStatus("sent");
+
+        const res = await fetch("/api/auth/forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        });
+
+        setStatus(res.ok ? "sent" : "error");
     }
 
     return (
@@ -49,9 +54,9 @@ export default function ForgotPasswordPage() {
                                 ✓
                             </div>
                             <p className="font-semibold text-foreground">Email envoyé !</p>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-muted-foreground text-center">
                                 Si un compte existe pour <strong>{email}</strong>, vous recevrez un lien dans quelques
-                                minutes.
+                                minutes. Pensez à vérifier vos spams.
                             </p>
                             <Link
                                 href="/login"
@@ -74,10 +79,16 @@ export default function ForgotPasswordPage() {
                                 />
                             </div>
 
+                            {status === "error" && (
+                                <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                                    Une erreur est survenue. Veuillez réessayer.
+                                </p>
+                            )}
+
                             <button
                                 type="submit"
                                 disabled={status === "sending"}
-                                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-50"
+                                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-white disabled:opacity-50"
                                 style={{ backgroundColor: "var(--primary)" }}
                             >
                                 {status === "sending" ? (
