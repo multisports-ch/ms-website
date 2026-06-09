@@ -79,6 +79,7 @@ export default function SignInPage() {
                                 <label className="text-sm font-semibold text-foreground">Mot de passe</label>
                                 <Link
                                     href="/forgot-password"
+                                    tabIndex={-1}
                                     className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                                 >
                                     Mot de passe oublié ?

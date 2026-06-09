@@ -14,71 +14,121 @@ export default async function Home() {
 
     return (
         <div className="flex flex-col">
-            {/* Hero Section */}
-            <div className="flex flex-col md:flex-row items-center justify-between pb-12">
-                <div className="w-full md:w-3/5 h-64 md:h-full">
-                    {heroImage?.imageUrl ? (
-                        <Image
-                            src={heroImage.imageUrl}
-                            alt={heroImage.imageAlt ?? "Multisports"}
-                            width={500}
-                            height={500}
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <Image
-                            src="/images/multisports.jpg"
-                            alt="Multisports"
-                            width={500}
-                            height={500}
-                            className="w-full h-full object-cover"
-                        />
-                    )}
+            {/* ── HERO ─────────────────────────────────────────────── */}
+            <section className="relative md:min-h-[85vh] flex flex-col md:flex-row overflow-hidden">
+                {/* Image — full bleed left, no gradient */}
+                <div className="relative w-full md:w-3/5 min-h-[50vw] md:min-h-0">
+                    <Image
+                        src={heroImage?.imageUrl ?? "/images/multisports.jpg"}
+                        alt={heroImage?.imageAlt ?? "Multisports"}
+                        fill
+                        priority
+                        className="object-cover"
+                    />
                 </div>
-                <div className="w-full md:w-2/5 flex flex-col justify-center px-12 mt-6 md:mt-0">
-                    <h1 className="text-4xl font-bold text-center md:text-left">
+
+                {/* Text panel */}
+                <div className="w-full md:w-2/5 flex flex-col justify-center px-8 md:px-14 py-14 md:py-0">
+                    <div className="w-12 h-1.5 rounded-full mb-6" style={{ backgroundColor: "var(--accent)" }} />
+                    <h1 className="text-4xl sm:text-5xl xl:text-6xl font-black leading-tight tracking-tight text-foreground">
                         {heroTitle?.text ?? "Multisports : la découverte sportive sans routine"}
                     </h1>
-                    <p className="text-lg mt-4 text-center md:text-left">
+                    <p className="text-base sm:text-lg text-muted-foreground mt-5 leading-relaxed max-w-md">
                         {heroSubtitle?.text ??
                             "Venez essayer un sport différent toutes les 6 semaines et gardez le plaisir de bouger toute l'année."}
                     </p>
                 </div>
-            </div>
+            </section>
 
-            {/* Le Concept Section */}
-            <div className="flex flex-col md:flex-row items-center justify-between px-6 md:px-12 gap-8 py-16">
-                <div className="w-full md:w-4/5">
-                    <h1 className="text-4xl font-bold">Le Concept</h1>
-                    <p className="text-lg mt-4 text-justify">
+            {/* ── LE CONCEPT ───────────────────────────────────────── */}
+            <section className="relative px-6 md:px-12 py-20 md:py-28">
+                <span
+                    className="absolute right-6 top-8 text-[10rem] font-black leading-none select-none pointer-events-none hidden md:block"
+                    style={{ color: "var(--accent)", opacity: 0.12 }}
+                >
+                    MS
+                </span>
+
+                <div className="max-w-3xl relative z-10">
+                    <div className="w-8 h-1 rounded-full mb-4" style={{ backgroundColor: "var(--accent)" }} />
+                    <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground mb-6">Le Concept</h2>
+                    <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                         {aboutText?.text ?? "Nouveaux sports et défis toutes les 6 semaines..."}
                     </p>
-                </div>
-                <div className="w-full md:w-1/5 flex justify-center mt-6 md:mt-0">
-                    <Link href="/join">
-                        <button className="bg-accent text-white px-6 py-3 rounded-3xl font-bold text-xl flex items-center gap-2 group hover:gap-3 transition-all whitespace-nowrap cursor-pointer w-full md:w-auto justify-center">
-                            <span className="flex-1 text-center md:text-left">Viens essayer</span>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+
+                    {/* Buttons moved here from hero */}
+                    <div className="flex flex-col sm:flex-row gap-3 mt-8">
+                        <Link href="/join">
+                            <button
+                                className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-base text-white transition-all hover:opacity-90 active:scale-95 group"
+                                style={{ backgroundColor: "var(--primary)" }}
                             >
-                                <path d="M5 12h14" />
-                                <path d="M12 5l7 7-7 7" />
-                            </svg>
-                        </button>
+                                Viens essayer
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    className="w-4 h-4 translate-x-0 group-hover:translate-x-1 transition-transform"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2.5}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="M5 12h14" />
+                                    <path d="M12 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        </Link>
+                        <Link href="/calendar">
+                            <button className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-base border-2 border-border text-foreground hover:bg-muted transition-colors">
+                                Calendrier
+                            </button>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Stats strip */}
+                <div className="mt-14 grid grid-cols-2 sm:grid-cols-3 gap-6 max-w-2xl">
+                    {[
+                        { value: "7", label: "sports par saison" },
+                        { value: "6", label: "semaines par sport" },
+                        { value: "7", label: "défis associés" }
+                    ].map((stat) => (
+                        <div key={stat.label} className="flex flex-col gap-1">
+                            <span className="text-4xl font-black" style={{ color: "var(--primary)" }}>
+                                {stat.value}
+                            </span>
+                            <span className="text-sm text-muted-foreground font-medium">{stat.label}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ── LE COMITÉ ────────────────────────────────────────── */}
+            <section className="px-6 md:px-12 py-20 md:py-28" style={{ backgroundColor: "var(--secondary)" }}>
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+                    <div>
+                        <div className="w-8 h-1 rounded-full mb-4" style={{ backgroundColor: "var(--accent)" }} />
+                        <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">Le Comité</h2>
+                    </div>
+                    <Link
+                        href="/contact"
+                        className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 shrink-0 mb-1"
+                    >
+                        Nous contacter
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-3.5 h-3.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
                     </Link>
                 </div>
-            </div>
 
-            {/* Le Comité Section */}
-            <div className="px-12 py-16">
-                <h1 className="text-4xl font-bold mb-8">Le Comité</h1>
                 {members.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {members.map((member) => (
@@ -93,9 +143,9 @@ export default async function Home() {
                         ))}
                     </div>
                 ) : (
-                    <p className="text-gray-400">Aucun membre du comité pour le moment.</p>
+                    <p className="text-muted-foreground">Aucun membre du comité pour le moment.</p>
                 )}
-            </div>
+            </section>
         </div>
     );
 }
