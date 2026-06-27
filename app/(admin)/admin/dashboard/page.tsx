@@ -61,11 +61,19 @@ export default async function AdminDashboardPage() {
     return (
         <div className="flex flex-col gap-10">
             {/* Welcome */}
-            <div>
-                <h1 className="text-2xl font-bold text-gray-800 mb-1">
-                    Bonjour, {session?.user.name ?? session?.user.email}
-                </h1>
-                <p className="text-gray-500 text-sm">Utilisez la barre latérale pour gérer le site.</p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-800 mb-1">
+                        Bonjour, {session?.user.name ?? session?.user.email}
+                    </h1>
+                    <p className="text-gray-500 text-sm">Utilisez la barre latérale pour gérer le site.</p>
+                </div>
+                <Link
+                    href="/dashboard"
+                    className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+                >
+                    Aller à l'espace membre
+                </Link>
             </div>
 
             {/* Quick nav cards */}

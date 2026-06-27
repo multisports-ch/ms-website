@@ -23,6 +23,10 @@ export default function AdminMembersPage() {
     const [form, setForm] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
+    const [editingUserId, setEditingUserId] = useState<string | null>(null);
+    const [editingName, setEditingName] = useState("");
+    const [savingName, setSavingName] = useState(false);
+    const [nameError, setNameError] = useState("");
 
     async function load() {
         const res = await fetch("/api/admin/members");
@@ -59,6 +63,46 @@ export default function AdminMembersPage() {
         setSaving(false);
         setAdding(false);
         setForm(emptyForm);
+        load();
+    }
+
+    function handleEditName(user: User) {
+        setError("");
+        setNameError("");
+        setEditingUserId(user.id);
+        setEditingName(user.name ?? "");
+    }
+
+    function handleCancelEdit() {
+        setEditingUserId(null);
+        setEditingName("");
+        setNameError("");
+    }
+
+    async function handleSaveName() {
+        if (!editingUserId) return;
+        setNameError("");
+        if (editingName.trim().length === 0) {
+            setNameError("Le nom ne peut pas être vide.");
+            return;
+        }
+
+        setSavingName(true);
+        const res = await fetch("/api/admin/members", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: editingUserId, name: editingName.trim() })
+        });
+
+        const data = await res.json();
+        setSavingName(false);
+
+        if (!res.ok) {
+            setNameError(data.error ?? "Une erreur est survenue.");
+            return;
+        }
+
+        handleCancelEdit();
         load();
     }
 
@@ -226,7 +270,16 @@ export default function AdminMembersPage() {
                                 {admins.map((user) => (
                                     <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-5 py-3 font-medium text-gray-800">
-                                            {user.name ?? <span className="text-gray-400 italic">Sans nom</span>}
+                                            {editingUserId === user.id ? (
+                                                <input
+                                                    type="text"
+                                                    value={editingName}
+                                                    onChange={(e) => setEditingName(e.target.value)}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                            ) : (
+                                                user.name ?? <span className="text-gray-400 italic">Sans nom</span>
+                                            )}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">{user.email}</td>
                                         <td className="px-5 py-3 text-gray-400">
@@ -237,12 +290,43 @@ export default function AdminMembersPage() {
                                             })}
                                         </td>
                                         <td className="px-5 py-3 text-right">
-                                            <button
-                                                onClick={() => handleDelete(user)}
-                                                className="text-xs px-3 py-1 border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-colors"
-                                            >
-                                                Supprimer
-                                            </button>
+                                            {editingUserId === user.id ? (
+                                                <div className="flex flex-col gap-2 items-end">
+                                                    <div className="flex items-center gap-2 justify-end">
+                                                        <button
+                                                            onClick={handleSaveName}
+                                                            disabled={savingName}
+                                                            className="text-xs px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                                                        >
+                                                            {savingName ? "Sauvegarde..." : "Enregistrer"}
+                                                        </button>
+                                                        <button
+                                                            onClick={handleCancelEdit}
+                                                            className="text-xs px-3 py-1 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
+                                                        >
+                                                            Annuler
+                                                        </button>
+                                                    </div>
+                                                    {nameError ? (
+                                                        <p className="text-xs text-red-600">{nameError}</p>
+                                                    ) : null}
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <button
+                                                        onClick={() => handleEditName(user)}
+                                                        className="text-xs px-3 py-1 border border-blue-200 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                                                    >
+                                                        Modifier
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(user)}
+                                                        className="text-xs px-3 py-1 border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </div>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
@@ -276,7 +360,16 @@ export default function AdminMembersPage() {
                                 {members.map((user) => (
                                     <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-5 py-3 font-medium text-gray-800">
-                                            {user.name ?? <span className="text-gray-400 italic">Sans nom</span>}
+                                            {editingUserId === user.id ? (
+                                                <input
+                                                    type="text"
+                                                    value={editingName}
+                                                    onChange={(e) => setEditingName(e.target.value)}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                            ) : (
+                                                user.name ?? <span className="text-gray-400 italic">Sans nom</span>
+                                            )}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">{user.email}</td>
                                         <td className="px-5 py-3 text-gray-400">
@@ -287,12 +380,43 @@ export default function AdminMembersPage() {
                                             })}
                                         </td>
                                         <td className="px-5 py-3 text-right">
-                                            <button
-                                                onClick={() => handleDelete(user)}
-                                                className="text-xs px-3 py-1 border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-colors"
-                                            >
-                                                Supprimer
-                                            </button>
+                                            {editingUserId === user.id ? (
+                                                <div className="flex flex-col gap-2 items-end">
+                                                    <div className="flex items-center gap-2 justify-end">
+                                                        <button
+                                                            onClick={handleSaveName}
+                                                            disabled={savingName}
+                                                            className="text-xs px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                                                        >
+                                                            {savingName ? "Sauvegarde..." : "Enregistrer"}
+                                                        </button>
+                                                        <button
+                                                            onClick={handleCancelEdit}
+                                                            className="text-xs px-3 py-1 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
+                                                        >
+                                                            Annuler
+                                                        </button>
+                                                    </div>
+                                                    {nameError ? (
+                                                        <p className="text-xs text-red-600">{nameError}</p>
+                                                    ) : null}
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <button
+                                                        onClick={() => handleEditName(user)}
+                                                        className="text-xs px-3 py-1 border border-blue-200 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                                                    >
+                                                        Modifier
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(user)}
+                                                        className="text-xs px-3 py-1 border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </div>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

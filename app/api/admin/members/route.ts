@@ -85,3 +85,24 @@ export async function DELETE(req: NextRequest) {
     await db.delete(users).where(eq(users.id, id));
     return NextResponse.json({ success: true });
 }
+
+export async function PATCH(req: NextRequest) {
+    const session = await auth();
+    if (!session || session.user.role !== "admin") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id, name } = await req.json();
+
+    if (!id || typeof id !== "string" || typeof name !== "string") {
+        return NextResponse.json({ error: "Données invalides." }, { status: 400 });
+    }
+
+    const trimmedName = name.trim();
+    if (trimmedName.length === 0) {
+        return NextResponse.json({ error: "Le nom ne peut pas être vide." }, { status: 400 });
+    }
+
+    await db.update(users).set({ name: trimmedName }).where(eq(users.id, id));
+    return NextResponse.json({ success: true });
+}
