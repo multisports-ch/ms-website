@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, integer, boolean, uniqueIndex } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // ============================================================
@@ -134,20 +134,26 @@ export const eventResults = pgTable("event_results", {
 // Recomputed every time admin saves event results
 // ============================================================
 
-export const seasonLeaderboard = pgTable("season_leaderboard", {
-    id: text("id")
-        .primaryKey()
-        .$defaultFn(() => crypto.randomUUID()),
-    seasonId: text("season_id")
-        .notNull()
-        .references(() => seasons.id, { onDelete: "cascade" }),
-    userId: text("user_id")
-        .notNull()
-        .references(() => users.id, { onDelete: "cascade" }),
-    totalPoints: integer("total_points").notNull().default(0),
-    rank: integer("rank").notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull()
-});
+export const seasonLeaderboard = pgTable(
+    "season_leaderboard",
+    {
+        id: text("id")
+            .primaryKey()
+            .$defaultFn(() => crypto.randomUUID()),
+        seasonId: text("season_id")
+            .notNull()
+            .references(() => seasons.id, { onDelete: "cascade" }),
+        userId: text("user_id")
+            .notNull()
+            .references(() => users.id, { onDelete: "cascade" }),
+        totalPoints: integer("total_points").notNull().default(0),
+        rank: integer("rank").notNull(),
+        updatedAt: timestamp("updated_at").defaultNow().notNull()
+    },
+    (table) => ({
+        seasonUserUnique: uniqueIndex("season_leaderboard_season_user_unique").on(table.seasonId, table.userId)
+    })
+);
 
 // ============================================================
 // NEWS
