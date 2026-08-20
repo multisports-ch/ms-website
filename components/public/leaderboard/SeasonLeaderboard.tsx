@@ -214,7 +214,7 @@ export default function SeasonLeaderboard({
             {selectedEventId && (
                 <div>
                     {/* Results header */}
-                    <div className="flex items-center gap-3 mb-4">
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
                         <div className="h-6 w-1 rounded-full" style={{ backgroundColor: "var(--accent)" }} />
                         <h2 className="text-xl font-bold text-foreground">Résultats — {selectedEvent?.name}</h2>
                         <span
@@ -243,7 +243,8 @@ export default function SeasonLeaderboard({
                         </div>
                     ) : eventResults.length > 0 ? (
                         <div className="rounded-2xl overflow-hidden shadow-lg border border-border">
-                            <table className="w-full text-sm bg-card">
+                            <div className="overflow-x-auto">
+                                <table className="w-full min-w-[36rem] text-sm bg-card">
                                 <thead>
                                     <tr className="border-b-2 border-border bg-muted/50">
                                         <th className="px-5 py-3 text-left font-bold text-muted-foreground text-xs uppercase tracking-widest w-20">
@@ -300,7 +301,8 @@ export default function SeasonLeaderboard({
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                                </table>
+                            </div>
                         </div>
                     ) : (
                         <div className="text-center py-12 text-muted-foreground bg-card rounded-2xl border border-border">
