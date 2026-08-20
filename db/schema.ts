@@ -164,7 +164,8 @@ export const news = pgTable("news", {
         .$defaultFn(() => crypto.randomUUID()),
     title: text("title").notNull(),
     body: text("body"),
-    publishedAt: timestamp("published_at").defaultNow().notNull(),
+    newsDate: timestamp("news_date", { mode: "date" }).notNull(),
+    order: integer("order").notNull().default(0),
     visible: boolean("visible").notNull().default(true)
 });
 

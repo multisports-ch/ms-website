@@ -25,7 +25,7 @@ function EventCard({ event }: { event: Event }) {
     return (
         <>
             <div
-                className={`bg-card border-2 rounded-2xl p-6 flex flex-col gap-4 ${
+                className={`bg-card border-2 rounded-2xl p-4 sm:p-6 flex flex-col gap-4 min-w-0 ${
                     event.type === "sport" ? "border-primary" : "border-purple-400"
                 }`}
             >
@@ -50,7 +50,7 @@ function EventCard({ event }: { event: Event }) {
                 </div>
 
                 {/* Name */}
-                <h3 className="text-2xl font-black text-foreground">{event.name}</h3>
+                <h3 className="text-xl sm:text-2xl font-black text-foreground wrap-break-word">{event.name}</h3>
 
                 {/* Details */}
                 <div className="flex flex-col gap-2 text-sm">

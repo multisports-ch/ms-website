@@ -12,13 +12,23 @@ async function main() {
             { id: "home_hero_image", page: "home", label: "Hero Image" },
             { id: "home_about_text", page: "home", label: "About Section Text" },
             // Join page
-            // Join page
-            { id: "join_inscriptions_list", page: "join", label: "Inscriptions — liste" },
-            { id: "join_conditions_list", page: "join", label: "Conditions — liste" },
-            { id: "join_rules_left", page: "join", label: "Règles du Multisport — liste" },
-            { id: "join_rules_right_doc", page: "join", label: "Règles complètes (PDF)" },
-            { id: "join_doc_formulaire", page: "join", label: "Formulaire d'inscription (PDF)" },
-            { id: "join_doc_statuts", page: "join", label: "Statuts de l'association (PDF)" }
+            { id: "join_association_text", page: "join", label: "Présentation de l'association et adhésion" },
+            { id: "join_statuts_document", page: "join", label: "Statuts de l'association (PDF)" },
+            { id: "join_rules_document", page: "join", label: "Règles du Multisport (PDF)" },
+            { id: "join_membership_form", page: "join", label: "Lien du formulaire d'adhésion en ligne" },
+            // Email templates
+            {
+                id: "template_email_guest",
+                page: "email",
+                label: "Confirmation d'inscription invité",
+                text: "Bonjour {{name}},\n\nVotre inscription au {{eventType}} {{eventName}} est confirmée.\n\nDate : {{eventDateTime}}\nLieu : {{eventLocation}}\nPrix invité : {{eventPrice}}\n\nÀ bientôt !"
+            },
+            {
+                id: "template_email_guest_subject",
+                page: "email",
+                label: "Objet de confirmation d'inscription invité",
+                text: "Confirmation d'inscription - {{eventType}} {{eventName}}"
+            }
         ])
         .onConflictDoNothing();
 

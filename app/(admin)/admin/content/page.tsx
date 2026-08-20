@@ -4,8 +4,16 @@ import ContentBlockEditor from "@/components/admin/ContentBlockEditor";
 
 const pages = [
     { id: "home", label: "Accueil" },
-    { id: "join", label: "Rejoindre" }
+    { id: "join", label: "Rejoindre" },
+    { id: "email", label: "Emails" }
 ];
+
+const editableJoinBlocks = new Set([
+    "join_association_text",
+    "join_statuts_document",
+    "join_rules_document",
+    "join_membership_form"
+]);
 
 export default async function AdminContentPage() {
     const blocks = await db.select().from(contentBlocks).orderBy(contentBlocks.page);
@@ -13,7 +21,9 @@ export default async function AdminContentPage() {
 
     const blocksByPage = pages.reduce(
         (acc, page) => {
-            acc[page.id] = blocks.filter((b) => b.page === page.id);
+            acc[page.id] = blocks.filter(
+                (b) => b.page === page.id && (page.id !== "join" || editableJoinBlocks.has(b.id))
+            );
             return acc;
         },
         {} as Record<string, ContentBlock[]>

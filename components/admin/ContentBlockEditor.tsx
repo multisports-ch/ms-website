@@ -31,6 +31,7 @@ export default function ContentBlockEditor({ block }: Props) {
 
     const isImageBlock = block.id.includes("image");
     const isFileBlock = block.id.includes("doc") || block.id.includes("file");
+    const isLinkBlock = block.id === "join_membership_form";
 
     async function handleSave() {
         setSaving(true);
@@ -61,7 +62,15 @@ export default function ContentBlockEditor({ block }: Props) {
                 <span className="text-xs text-gray-400 font-mono">{block.id}</span>
             </div>
 
-            {isFileBlock ? (
+            {isLinkBlock ? (
+                <input
+                    type="url"
+                    value={fileUrl}
+                    onChange={(e) => setFileUrl(e.target.value)}
+                    placeholder="https://forms.google.com/..."
+                    className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            ) : isFileBlock ? (
                 <FileUploader
                     currentUrl={fileUrl || null}
                     currentFileId={fileFileId || null}

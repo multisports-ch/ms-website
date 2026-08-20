@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getContentBlock, getCommitteeMembers } from "@/lib/queries";
 import ComiteCard from "@/components/public/ComiteCard";
+import LinkedText from "@/components/shared/LinkedText";
 
 export default async function Home() {
     const [heroImage, heroTitle, heroSubtitle, aboutText, members] = await Promise.all([
@@ -31,11 +32,15 @@ export default async function Home() {
                 <div className="w-full md:w-2/5 flex flex-col justify-center px-8 md:px-14 py-14 md:py-0">
                     <div className="w-12 h-1.5 rounded-full mb-6" style={{ backgroundColor: "var(--accent)" }} />
                     <h1 className="text-4xl sm:text-5xl xl:text-6xl font-black leading-tight tracking-tight text-foreground">
-                        {heroTitle?.text ?? "Multisports : la découverte sportive sans routine"}
+                        <LinkedText text={heroTitle?.text ?? "Multisports : la découverte sportive sans routine"} />
                     </h1>
                     <p className="text-base sm:text-lg text-muted-foreground mt-5 leading-relaxed max-w-md">
-                        {heroSubtitle?.text ??
-                            "Venez essayer un sport différent toutes les 6 semaines et gardez le plaisir de bouger toute l'année."}
+                        <LinkedText
+                            text={
+                                heroSubtitle?.text ??
+                                "Venez essayer un sport différent toutes les 6 semaines et gardez le plaisir de bouger toute l'année."
+                            }
+                        />
                     </p>
                 </div>
             </section>
@@ -53,7 +58,7 @@ export default async function Home() {
                     <div className="w-8 h-1 rounded-full mb-4" style={{ backgroundColor: "var(--accent)" }} />
                     <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground mb-6">Le Concept</h2>
                     <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                        {aboutText?.text ?? "Nouveaux sports et défis toutes les 6 semaines..."}
+                        <LinkedText text={aboutText?.text ?? "Nouveaux sports et défis toutes les 6 semaines..."} />
                     </p>
 
                     {/* Buttons moved here from hero */}

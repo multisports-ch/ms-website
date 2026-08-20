@@ -14,8 +14,8 @@ export async function PATCH(req: NextRequest) {
 
     const { id, text, imageUrl, imageFileId, imageAlt, fileUrl, fileFileId } = await req.json();
 
-    if (imageFileId) {
-        const existing = await db.select().from(contentBlocks).where(eq(contentBlocks.id, id)).limit(1);
+    const existing = await db.select().from(contentBlocks).where(eq(contentBlocks.id, id)).limit(1);
+    if (imageFileId && imageFileId !== existing[0]?.imageFileId) {
         await deleteImageKitFile(existing[0]?.imageFileId);
     }
 
@@ -31,6 +31,22 @@ export async function PATCH(req: NextRequest) {
             updatedAt: new Date()
         })
         .where(eq(contentBlocks.id, id));
+
+    revalidateTag("content-blocks", "default");
+    return NextResponse.json({ success: true });
+}
+
+export async function DELETE(req: NextRequest) {
+    const session = await auth();
+    if (!session || session.user.role !== "admin") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await req.json();
+    const existing = await db.select().from(contentBlocks).where(eq(contentBlocks.id, id)).limit(1);
+
+    await deleteImageKitFile(existing[0]?.imageFileId);
+    await db.delete(contentBlocks).where(eq(contentBlocks.id, id));
 
     revalidateTag("content-blocks", "default");
     return NextResponse.json({ success: true });

@@ -12,7 +12,7 @@ import {
     users,
     guests
 } from "@/db/schema";
-import { eq, gte, and, desc } from "drizzle-orm";
+import { eq, gte, and, desc, asc } from "drizzle-orm";
 
 export const getContentBlock = unstable_cache(
     async (id: string) => {
@@ -139,7 +139,7 @@ export const getVisibleNews = unstable_cache(
             with: {
                 images: { orderBy: (i, { asc }) => [asc(i.order)] }
             },
-            orderBy: (news, { desc }) => [desc(news.publishedAt)]
+            orderBy: (news, { asc }) => [asc(news.order)]
         });
     },
     ["visible-news"],

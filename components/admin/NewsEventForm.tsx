@@ -4,6 +4,7 @@ import { useState } from "react";
 import ImageUploader from "./ImageUploader";
 
 interface NewsImage {
+    id?: string;
     imageUrl: string;
     imageFileId?: string | null;
 }
@@ -13,6 +14,8 @@ interface NewsEvent {
     title: string;
     body?: string | null;
     images?: NewsImage[];
+    newsDate: string | Date;
+    order: number;
     visible: boolean;
 }
 
@@ -26,6 +29,10 @@ export default function NewsEventForm({ initial, onSave, onCancel }: Props) {
     const [title, setTitle] = useState(initial?.title ?? "");
     const [body, setBody] = useState(initial?.body ?? "");
     const [images, setImages] = useState<NewsImage[]>(initial?.images ?? []);
+    const [newsDate, setNewsDate] = useState(
+        initial?.newsDate ? new Date(initial.newsDate).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
+    );
+    const [order, setOrder] = useState(initial?.order ?? 0);
     const [visible, setVisible] = useState(initial?.visible ?? true);
     const [saving, setSaving] = useState(false);
 
@@ -38,11 +45,14 @@ export default function NewsEventForm({ initial, onSave, onCancel }: Props) {
             ...(initial?.id && { id: initial.id }),
             title,
             body,
+            newsDate,
+            order,
             visible,
             images: images
                 .filter((img) => img.imageUrl)
                 .slice(0, 10)
                 .map((img, index) => ({
+                    ...(img.id && { id: img.id }),
                     imageUrl: img.imageUrl,
                     imageFileId: img.imageFileId ?? null,
                     order: index
@@ -90,6 +100,26 @@ export default function NewsEventForm({ initial, onSave, onCancel }: Props) {
                     rows={5}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
                     placeholder="Rédigez votre contenu ici..."
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium mb-1">Date de l'actualité</label>
+                <input
+                    type="date"
+                    value={newsDate}
+                    onChange={(e) => setNewsDate(e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium mb-1">Ordre d'affichage</label>
+                <input
+                    type="number"
+                    value={order}
+                    onChange={(e) => setOrder(Number(e.target.value))}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
             </div>
 

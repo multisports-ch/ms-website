@@ -15,6 +15,7 @@ export default function GuestSignupModal({ eventId, eventName, onClose }: Props)
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<Status>("idle");
     const [errorMsg, setErrorMsg] = useState("");
+    const [emailSent, setEmailSent] = useState(false);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -35,6 +36,7 @@ export default function GuestSignupModal({ eventId, eventName, onClose }: Props)
             return;
         }
 
+        setEmailSent(Boolean(data.emailSent));
         setStatus("success");
     }
 
@@ -56,6 +58,11 @@ export default function GuestSignupModal({ eventId, eventName, onClose }: Props)
                         <h2 className="text-xl font-bold text-foreground">Inscription confirmée !</h2>
                         <p className="text-sm text-muted-foreground">
                             Vous êtes inscrit(e) à <strong>{eventName}</strong>.
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                            {emailSent
+                                ? `Un email de confirmation a été envoyé à ${email}.`
+                                : "Votre inscription est enregistrée, mais l'email de confirmation n'a pas pu être envoyé."}
                         </p>
                         <button
                             onClick={onClose}
@@ -83,14 +90,14 @@ export default function GuestSignupModal({ eventId, eventName, onClose }: Props)
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-sm font-semibold text-foreground">
-                                    Nom complet <span style={{ color: "var(--accent)" }}>*</span>
+                                    Prénom <span style={{ color: "var(--accent)" }}>*</span>
                                 </label>
                                 <input
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
-                                    placeholder="Jean Dupont"
+                                    placeholder="Jean"
                                     className="border border-border rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                                 />
                             </div>

@@ -21,15 +21,6 @@ export default function ImageUploader({ currentUrl, currentFileId, onUpload, fol
 
         setUploading(true);
 
-        // Delete previous image if exists
-        if (currentFileId) {
-            await fetch("/api/imagekit/upload", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ fileId: currentFileId })
-            });
-        }
-
         const reader = new FileReader();
         reader.onload = async () => {
             const base64 = (reader.result as string).split(",")[1];

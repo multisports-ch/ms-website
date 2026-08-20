@@ -1,4 +1,5 @@
 import Image from "next/image";
+import LinkedText from "@/components/shared/LinkedText";
 
 type Props = {
     src: string;
@@ -17,8 +18,10 @@ export default function ComiteCard({ src, alt = "Membre", name, role, descriptio
             <div className="p-4 flex flex-col justify-between h-1/2 bg-secondary">
                 <div>
                     <h3 className="text-xl font-semibold text-black">{name}</h3>
-                    <p className="text-sm text-black/80">{role}</p>
-                    {description ? <p className="mt-2 text-sm text-black/90">{description}</p> : null}
+                    <p className="text-sm text-black/80"><LinkedText text={role} /></p>
+                    {description ? (
+                        <p className="mt-2 text-sm text-black/90"><LinkedText text={description} /></p>
+                    ) : null}
                 </div>
             </div>
         </div>

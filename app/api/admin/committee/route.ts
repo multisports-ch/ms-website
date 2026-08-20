@@ -38,9 +38,8 @@ export async function PATCH(req: NextRequest) {
     const { id, name, role, description, photoUrl, photoFileId, order } = await req.json();
 
     // If a new photo is being set, delete the old one first
-    if (photoFileId) {
-        const existing = await db.select().from(committeeMembers).where(eq(committeeMembers.id, id)).limit(1);
-
+    const existing = await db.select().from(committeeMembers).where(eq(committeeMembers.id, id)).limit(1);
+    if (photoFileId && photoFileId !== existing[0]?.photoFileId) {
         await deleteImageKitFile(existing[0]?.photoFileId);
     }
 

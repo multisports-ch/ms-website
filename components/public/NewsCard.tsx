@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import LinkedText from "@/components/shared/LinkedText";
 
 interface NewsImage {
     id: string;
@@ -13,7 +14,7 @@ interface NewsItem {
     id: string;
     title: string;
     body: string | null;
-    publishedAt: string | Date;
+    newsDate: string | Date;
     images: NewsImage[];
 }
 
@@ -57,18 +58,18 @@ export default function NewsCard({ item }: Props) {
 
                 <div className="p-6 flex flex-col flex-1 gap-3">
                     <p className="text-xs text-muted-foreground">
-                        {new Date(item.publishedAt).toLocaleDateString("fr-CH", {
+                        {new Date(item.newsDate).toLocaleDateString("fr-CH", {
                             day: "numeric",
                             month: "long",
                             year: "numeric"
                         })}
                     </p>
                     <h3 className="font-bold text-xl text-foreground mb-1 group-hover:text-primary transition-colors">
-                        {item.title}
+                        <LinkedText text={item.title} />
                     </h3>
                     {previewText && (
                         <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
-                            {previewText}
+                            <LinkedText text={previewText} />
                             {needsExpand ? "..." : ""}
                         </p>
                     )}
@@ -149,13 +150,13 @@ export default function NewsCard({ item }: Props) {
                             <div className="flex items-start justify-between mb-5 gap-4">
                                 <div>
                                     <p className="text-xs text-muted-foreground mb-2">
-                                        {new Date(item.publishedAt).toLocaleDateString("fr-CH", {
+                                        {new Date(item.newsDate).toLocaleDateString("fr-CH", {
                                             day: "numeric",
                                             month: "long",
                                             year: "numeric"
                                         })}
                                     </p>
-                                    <h2 className="text-3xl font-black text-foreground">{item.title}</h2>
+                                    <h2 className="text-3xl font-black text-foreground"><LinkedText text={item.title} /></h2>
                                 </div>
                                 <button
                                     onClick={() => {
@@ -170,7 +171,7 @@ export default function NewsCard({ item }: Props) {
 
                             {item.body && (
                                 <p className="text-base text-foreground/80 leading-relaxed whitespace-pre-wrap">
-                                    {item.body}
+                                    <LinkedText text={item.body} />
                                 </p>
                             )}
                         </div>

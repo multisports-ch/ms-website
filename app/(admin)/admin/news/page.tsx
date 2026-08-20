@@ -17,7 +17,8 @@ interface NewsEvent {
     body?: string | null;
     images?: NewsImage[];
     visible: boolean;
-    publishedAt: string;
+    newsDate: string;
+    order: number;
 }
 
 export default function AdminNewsPage() {

@@ -1,4 +1,7 @@
 import { getJoinPageContent } from "@/lib/queries";
+import { getCurrentSeason, getUpcomingEvents } from "@/lib/queries";
+import UpcomingEvents from "@/components/public/calendar/UpcomingEvents";
+import LinkedText from "@/components/shared/LinkedText";
 
 function DownloadButton({ url, label }: { url: string | null | undefined; label: string }) {
     if (!url) return null;
@@ -28,98 +31,79 @@ function DownloadButton({ url, label }: { url: string | null | undefined; label:
     );
 }
 
-function TextList({ text, fallback }: { text?: string | null; fallback: string[] }) {
-    const lines = text ? text.split("\n").filter((l) => l.trim()) : fallback;
-
-    return (
-        <ul className="flex flex-col gap-2">
-            {lines.map((line, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
-                    <span
-                        className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ backgroundColor: "var(--primary)" }}
-                    />
-                    {line.replace(/^[-•]\s*/, "")}
-                </li>
-            ))}
-        </ul>
-    );
-}
-
 export default async function JoinPage() {
-    const content = await getJoinPageContent();
+    const [content, currentSeason] = await Promise.all([getJoinPageContent(), getCurrentSeason()]);
+    const upcomingEvents = currentSeason ? await getUpcomingEvents(currentSeason.id) : [];
+    const upcomingSport = upcomingEvents.find((event) => event.type === "sport") ?? null;
+    const upcomingDefi = upcomingEvents.find((event) => event.type === "defi") ?? null;
 
     return (
-        <div className="px-6 md:px-12 py-16">
-            {/* Header */}
-            <div className="mb-12">
+        <div className="px-4 sm:px-6 md:px-12 py-10 sm:py-16 flex flex-col gap-12 sm:gap-16">
+            <div>
                 <div className="w-10 h-1 rounded-full mb-3" style={{ backgroundColor: "var(--accent)" }} />
-                <h1 className="text-5xl font-black tracking-tight text-foreground">Participer</h1>
+                <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">Rejoindre Multisports</h1>
+                <p className="text-muted-foreground mt-2 text-base sm:text-lg">Découvrez le prochain sport et défi de la saison.</p>
             </div>
 
-            {/* Two column layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {/* Left column */}
-                <div className="flex flex-col gap-10">
-                    {/* Inscriptions et Invitations */}
-                    <section className="flex flex-col gap-4">
-                        <h2 className="text-xl font-black text-foreground">Inscriptions et Invitations</h2>
-                        <TextList
-                            text={content["join_inscriptions_list"]?.text}
-                            fallback={[
-                                "Télécharger le formulaire d'inscription (membres etc.)",
-                                "Demande de crédits d'invités (explications et conditions de participation à définir ici)",
-                                "Statuts"
-                            ]}
-                        />
-                        <div className="flex flex-wrap gap-2 mt-1">
-                            <DownloadButton
-                                url={content["join_doc_formulaire"]?.fileUrl}
-                                label="Formulaire d'inscription"
+            <section className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-8 sm:gap-10">
+                <div className="flex flex-col gap-8">
+                    <div>
+                        <div className="w-8 h-1 rounded-full mb-4" style={{ backgroundColor: "var(--accent)" }} />
+                        <h2 className="text-2xl sm:text-3xl font-black text-foreground mb-4">L'association</h2>
+                        <p className="text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                            <LinkedText
+                                text={
+                                    content["join_association_text"]?.text ??
+                                    "Multisports permet de découvrir régulièrement de nouveaux sports dans une ambiance conviviale. Pour devenir membre, consultez les documents officiels, prenez connaissance des règles et remplissez le formulaire en ligne. Les frais et les conditions de participation sont précisés dans les informations de l'association et ses statuts."
+                                }
                             />
-                            <DownloadButton url={content["join_doc_statuts"]?.fileUrl} label="Statuts" />
-                        </div>
-                    </section>
+                        </p>
+                    </div>
 
-                    {/* Conditions de participation */}
-                    <section className="flex flex-col gap-4">
-                        <h2 className="text-xl font-black text-foreground">Conditions de participation</h2>
-                        <TextList
-                            text={content["join_conditions_list"]?.text}
-                            fallback={[
-                                "Multisport se déroule dans le respect etc.",
-                                "Implication dans l'association",
-                                "Coûts"
-                            ]}
-                        />
-                    </section>
-                </div>
-
-                {/* Right column */}
-                <div className="flex flex-col gap-4">
-                    <h2 className="text-xl font-black text-foreground">Règles du Multisport</h2>
-                    <TextList
-                        text={content["join_rules_left"]?.text}
-                        fallback={[
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                            "Nulla vitae fermentum mauris.",
-                            "Integer vel lectus tellus.",
-                            "Mauris ac tempor purus, eu lacinia leo.",
-                            "Cras et nisl sed augue consequat feugiat.",
-                            "Curabitur nec quam id arcu molestie iaculis.",
-                            "Aliquam rutrum mattis rutrum.",
-                            "Suspendisse tempor metus ac velit luctus.",
-                            "Mauris fringilla faucibus metus."
-                        ]}
-                    />
-                    <div className="mt-2">
-                        <DownloadButton
-                            url={content["join_rules_right_doc"]?.fileUrl}
-                            label="Télécharger les règles complètes"
-                        />
+                    <div>
+                        <h2 className="text-2xl font-black text-foreground mb-4">Règles et frais</h2>
+                        <p className="text-base text-muted-foreground leading-relaxed">
+                            La participation aux activités se fait dans le respect des règles de l'association. Les frais
+                            de membre et les éventuels frais liés aux activités sont indiqués dans les documents officiels.
+                        </p>
                     </div>
                 </div>
-            </div>
+
+                <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 flex flex-col gap-5 h-fit">
+                    <div>
+                        <h2 className="text-2xl font-black text-foreground">Devenir membre</h2>
+                        <p className="text-sm text-muted-foreground mt-2">Lisez les documents officiels, puis remplissez le formulaire en ligne.</p>
+                    </div>
+                    <div className="flex flex-col items-start gap-3">
+                        <DownloadButton url={content["join_statuts_document"]?.fileUrl} label="Télécharger les statuts" />
+                        <DownloadButton url={content["join_rules_document"]?.fileUrl} label="Télécharger les règles" />
+                    </div>
+                    {content["join_membership_form"]?.fileUrl && (
+                        <a
+                            href={content["join_membership_form"].fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full inline-flex items-center justify-center px-5 py-3 rounded-xl text-sm font-bold text-white text-center hover:opacity-90 transition-opacity"
+                            style={{ backgroundColor: "var(--primary)" }}
+                        >
+                            Remplir le formulaire pour devenir membre
+                        </a>
+                    )}
+                </div>
+            </section>
+
+            <UpcomingEvents
+                upcomingSport={
+                    upcomingSport
+                        ? { ...upcomingSport, date: upcomingSport.date ? new Date(upcomingSport.date).toISOString() : null }
+                        : null
+                }
+                upcomingDefi={
+                    upcomingDefi
+                        ? { ...upcomingDefi, date: upcomingDefi.date ? new Date(upcomingDefi.date).toISOString() : null }
+                        : null
+                }
+            />
         </div>
     );
 }
