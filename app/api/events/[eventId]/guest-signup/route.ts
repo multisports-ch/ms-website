@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { eventSignups, guests, events } from "@/db/schema";
 import { getContentBlock } from "@/lib/queries";
 import { sendEmail } from "@/lib/mailer";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 function escapeHtml(value: string): string {
@@ -16,9 +16,10 @@ function escapeHtml(value: string): string {
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
     const { eventId } = await params;
-    const { name, email } = await req.json();
+    const { name, email: rawEmail } = await req.json();
+    const email = typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : "";
 
-    if (!name || !email) {
+    if (typeof name !== "string" || !name.trim() || !email) {
         return NextResponse.json({ error: "Nom et email requis." }, { status: 400 });
     }
 
@@ -30,13 +31,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ eve
     }
 
     // Find or create guest
-    let guest = await db.select().from(guests).where(eq(guests.email, email)).limit(1);
+    let guest = await db
+        .select()
+        .from(guests)
+        .where(eq(sql`lower(${guests.email})`, email))
+        .limit(1);
 
     let guestId: string;
     if (guest[0]) {
         guestId = guest[0].id;
     } else {
-        const newGuest = await db.insert(guests).values({ name, email }).returning();
+        const newGuest = await db.insert(guests).values({ name: name.trim(), email }).returning();
         guestId = newGuest[0].id;
     }
 

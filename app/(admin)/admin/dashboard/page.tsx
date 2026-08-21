@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { eventSignups, events, users, guests, seasons } from "@/db/schema";
 import { eq, and, gte } from "drizzle-orm";
 import ChangePasswordForm from "@/components/shared/ChangePasswordForm";
+import RemoveGuestSignupButton from "@/components/admin/RemoveGuestSignupButton";
 
 const cards = [
     { label: "Blocs de contenu", href: "/admin/content", description: "Éditer les textes et images" },
@@ -151,6 +152,7 @@ export default async function AdminDashboardPage() {
                                                 >
                                                     {signup.user ? "Membre" : "Invité"}
                                                 </span>
+                                                {signup.guest && <RemoveGuestSignupButton signupId={signup.id} />}
                                             </li>
                                         ))}
                                     </ul>
