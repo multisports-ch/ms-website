@@ -41,15 +41,21 @@ export default async function JoinPage() {
         <div className="px-4 sm:px-6 md:px-12 py-10 sm:py-16 flex flex-col gap-12 sm:gap-16">
             <div>
                 <div className="w-10 h-1 rounded-full mb-3" style={{ backgroundColor: "var(--accent)" }} />
-                <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">Rejoindre Multisports</h1>
-                <p className="text-muted-foreground mt-2 text-base sm:text-lg">Découvrez le prochain sport et défi de la saison.</p>
+                <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">
+                    {content["join_title"]?.text ?? "Rejoindre Multisports"}
+                </h1>
+                <p className="text-muted-foreground mt-2 text-base sm:text-lg">
+                    {content["join_subtitle"]?.text ?? "Découvrez le prochain sport et défi de la saison."}
+                </p>
             </div>
 
             <section className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-8 sm:gap-10">
                 <div className="flex flex-col gap-8">
                     <div>
                         <div className="w-8 h-1 rounded-full mb-4" style={{ backgroundColor: "var(--accent)" }} />
-                        <h2 className="text-2xl sm:text-3xl font-black text-foreground mb-4">L'association</h2>
+                        <h2 className="text-2xl sm:text-3xl font-black text-foreground mb-4">
+                            {content["join_association_title"]?.text ?? "L'association"}
+                        </h2>
                         <p className="text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">
                             <LinkedText
                                 text={
@@ -61,22 +67,35 @@ export default async function JoinPage() {
                     </div>
 
                     <div>
-                        <h2 className="text-2xl font-black text-foreground mb-4">Règles et frais</h2>
+                        <h2 className="text-2xl font-black text-foreground mb-4">
+                            {content["join_rules_title"]?.text ?? "Règles et frais"}
+                        </h2>
                         <p className="text-base text-muted-foreground leading-relaxed">
-                            La participation aux activités se fait dans le respect des règles de l'association. Les frais
-                            de membre et les éventuels frais liés aux activités sont indiqués dans les documents officiels.
+                            {content["join_rules_text"]?.text ??
+                                "La participation aux activités se fait dans le respect des règles de l'association. Les frais de membre et les éventuels frais liés aux activités sont indiqués dans les documents officiels."}
                         </p>
                     </div>
                 </div>
 
                 <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 flex flex-col gap-5 h-fit">
                     <div>
-                        <h2 className="text-2xl font-black text-foreground">Devenir membre</h2>
-                        <p className="text-sm text-muted-foreground mt-2">Lisez les documents officiels, puis remplissez le formulaire en ligne.</p>
+                        <h2 className="text-2xl font-black text-foreground">
+                            {content["join_membership_title"]?.text ?? "Devenir membre"}
+                        </h2>
+                        <p className="text-sm text-muted-foreground mt-2">
+                            {content["join_membership_text"]?.text ??
+                                "Lisez les documents officiels, puis remplissez le formulaire en ligne."}
+                        </p>
                     </div>
                     <div className="flex flex-col items-start gap-3">
-                        <DownloadButton url={content["join_statuts_document"]?.fileUrl} label="Télécharger les statuts" />
-                        <DownloadButton url={content["join_rules_document"]?.fileUrl} label="Télécharger les règles" />
+                        <DownloadButton
+                            url={content["join_statuts_document"]?.fileUrl}
+                            label={content["join_statuts_label"]?.text ?? "Télécharger les statuts"}
+                        />
+                        <DownloadButton
+                            url={content["join_rules_document"]?.fileUrl}
+                            label={content["join_rules_label"]?.text ?? "Télécharger les règles"}
+                        />
                     </div>
                     {content["join_membership_form"]?.fileUrl && (
                         <a
@@ -86,7 +105,7 @@ export default async function JoinPage() {
                             className="w-full inline-flex items-center justify-center px-5 py-3 rounded-xl text-sm font-bold text-white text-center hover:opacity-90 transition-opacity"
                             style={{ backgroundColor: "var(--primary)" }}
                         >
-                            Remplir le formulaire pour devenir membre
+                            {content["join_membership_form_label"]?.text ?? "Remplir le formulaire pour devenir membre"}
                         </a>
                     )}
                 </div>

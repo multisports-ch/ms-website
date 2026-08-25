@@ -9,10 +9,20 @@ const pages = [
 ];
 
 const editableJoinBlocks = new Set([
+    "join_title",
+    "join_subtitle",
+    "join_association_title",
     "join_association_text",
+    "join_rules_title",
+    "join_rules_text",
+    "join_membership_title",
+    "join_membership_text",
+    "join_statuts_label",
     "join_statuts_document",
+    "join_rules_label",
     "join_rules_document",
-    "join_membership_form"
+    "join_membership_form",
+    "join_membership_form_label"
 ]);
 
 export default async function AdminContentPage() {
