@@ -19,7 +19,7 @@ async function getEventSignupOverview() {
                 where: eq(eventSignups.eventId, event.id),
                 with: {
                     user: { columns: { name: true, email: true } },
-                    guest: { columns: { name: true, email: true } }
+                    guest: { columns: { name: true, email: true, phone: true } }
                 }
             })
         }))

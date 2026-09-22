@@ -41,7 +41,7 @@ async function getUpcomingSignups() {
             where: eq(eventSignups.eventId, event.id),
             with: {
                 user: { columns: { id: true, name: true, email: true } },
-                guest: { columns: { id: true, name: true, email: true } }
+                guest: { columns: { id: true, name: true, email: true, phone: true } }
             }
         });
 
