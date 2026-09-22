@@ -1,24 +1,21 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { eventSignups, events, seasons } from "@/db/schema";
-import { eq, and, gte } from "drizzle-orm";
+import { eventSignups } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import SignOutButton from "@/components/shared/SignOutButton";
 import ChangePasswordForm from "@/components/shared/ChangePasswordForm";
 import MemberEventSignup from "@/components/member/MemberEventSignup";
-import { getCurrentSeason, getUpcomingEvents } from "@/lib/queries";
+import { getCurrentSeason, getSeasonEventsAll } from "@/lib/queries";
 
 export default async function MemberDashboardPage() {
     const session = await auth();
     if (!session) redirect("/login");
-
     const currentSeason = await getCurrentSeason();
-    const upcomingEvents = currentSeason ? await getUpcomingEvents(currentSeason.id) : [];
+    const seasonEvents = currentSeason ? await getSeasonEventsAll(currentSeason.id) : [];
 
-    // Get member's existing signups for upcoming events
-    const upcomingEventIds = upcomingEvents.map((e) => e.id);
     const mySignups =
-        upcomingEventIds.length > 0
+        seasonEvents.length > 0
             ? await db
                   .select({ eventId: eventSignups.eventId })
                   .from(eventSignups)
@@ -26,9 +23,6 @@ export default async function MemberDashboardPage() {
             : [];
 
     const mySignupEventIds = mySignups.map((s) => s.eventId);
-
-    const upcomingSport = upcomingEvents.find((e) => e.type === "sport") ?? null;
-    const upcomingDefi = upcomingEvents.find((e) => e.type === "defi") ?? null;
 
     return (
         <div className="min-h-screen bg-background">
@@ -53,33 +47,33 @@ export default async function MemberDashboardPage() {
                     <p className="text-muted-foreground mt-2">Bienvenue dans votre espace membre Multisports.</p>
                 </div>
 
-                {/* Upcoming event signups */}
-                {(upcomingSport || upcomingDefi) && (
+                {/* Full season event signups */}
+                {currentSeason && (
                     <div className="bg-card border border-border rounded-2xl p-6">
-                        <h2 className="text-lg font-bold text-foreground mb-1">Prochains événements</h2>
+                        <h2 className="text-lg font-bold text-foreground mb-1">Saison {currentSeason.name}</h2>
                         <p className="text-sm text-muted-foreground mb-6">
-                            Inscrivez-vous aux prochains sports et défis.
+                            Consultez tous les événements et inscrivez-vous à l'avance aux activités ouvertes.
                         </p>
-                        <div className="flex flex-col gap-4">
-                            {upcomingSport && (
-                                <MemberEventSignup
-                                    event={{
-                                        ...upcomingSport,
-                                        date: upcomingSport.date ? new Date(upcomingSport.date).toISOString() : null
-                                    }}
-                                    isSignedUp={mySignupEventIds.includes(upcomingSport.id)}
-                                />
-                            )}
-                            {upcomingDefi && (
-                                <MemberEventSignup
-                                    event={{
-                                        ...upcomingDefi,
-                                        date: upcomingDefi.date ? new Date(upcomingDefi.date).toISOString() : null
-                                    }}
-                                    isSignedUp={mySignupEventIds.includes(upcomingDefi.id)}
-                                />
-                            )}
-                        </div>
+                        {seasonEvents.length > 0 ? (
+                            <div className="flex flex-col gap-4">
+                                {seasonEvents.map((event) => {
+                                    const isUpcoming = !event.date || new Date(event.date) >= new Date();
+                                    return (
+                                        <MemberEventSignup
+                                            key={event.id}
+                                            event={{
+                                                ...event,
+                                                date: event.date ? new Date(event.date).toISOString() : null
+                                            }}
+                                            isSignedUp={mySignupEventIds.includes(event.id)}
+                                            canSignup={isUpcoming && event.signupOpen}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">Aucun événement dans cette saison.</p>
+                        )}
                     </div>
                 )}
 

@@ -12,11 +12,11 @@ interface Event {
     location: string | null;
     memberPrice: number | null;
     guestPrice: number | null;
+    signupOpen: boolean;
 }
 
 interface Props {
-    upcomingSport: Event | null;
-    upcomingDefi: Event | null;
+    events: Event[];
 }
 
 function EventCard({ event }: { event: Event }) {
@@ -37,7 +37,7 @@ function EventCard({ event }: { event: Event }) {
                         }`}
                         style={event.type === "sport" ? { backgroundColor: "var(--primary)" } : {}}
                     >
-                        {event.type === "sport" ? "⚽ Prochain sport" : "🎯 Prochain défi"}
+                        {event.type === "sport" ? "⚽ Sport" : "🎯 Défi"}
                     </span>
                     {event.date && new Date(event.date) > new Date() && (
                         <span
@@ -115,8 +115,8 @@ function EventCard({ event }: { event: Event }) {
     );
 }
 
-export default function UpcomingEvents({ upcomingSport, upcomingDefi }: Props) {
-    if (!upcomingSport && !upcomingDefi) {
+export default function UpcomingEvents({ events }: Props) {
+    if (events.length === 0) {
         return (
             <section>
                 <h2 className="text-2xl font-black text-foreground mb-6">Prochains événements</h2>
@@ -128,9 +128,10 @@ export default function UpcomingEvents({ upcomingSport, upcomingDefi }: Props) {
     return (
         <section>
             <h2 className="text-2xl font-black text-foreground mb-6">Prochains événements</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {upcomingSport && <EventCard event={upcomingSport} />}
-                {upcomingDefi && <EventCard event={upcomingDefi} />}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {events.map((event) => (
+                    <EventCard key={event.id} event={event} />
+                ))}
             </div>
         </section>
     );

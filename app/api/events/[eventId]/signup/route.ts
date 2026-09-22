@@ -41,6 +41,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ eve
         return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
+    if (!event[0].signupOpen) {
+        return NextResponse.json({ error: "Signups are closed" }, { status: 403 });
+    }
+
     // Prevent duplicate signup
     const existing = await db
         .select()

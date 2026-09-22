@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { seasonId, name, type, date, time, location, memberPrice, guestPrice } = await req.json();
+    const { seasonId, name, type, date, time, location, memberPrice, guestPrice, signupOpen } = await req.json();
 
     const result = await db
         .insert(events)
@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
             time,
             location,
             memberPrice: memberPrice ? Math.round(memberPrice * 100) : null,
-            guestPrice: guestPrice ? Math.round(guestPrice * 100) : null
+            guestPrice: guestPrice ? Math.round(guestPrice * 100) : null,
+            signupOpen: signupOpen ?? true
         })
         .returning();
 
@@ -47,7 +48,7 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id, name, type, date, time, location, memberPrice, guestPrice } = await req.json();
+    const { id, name, type, date, time, location, memberPrice, guestPrice, signupOpen } = await req.json();
 
     await db
         .update(events)
@@ -58,7 +59,8 @@ export async function PATCH(req: NextRequest) {
             ...(time !== undefined && { time }),
             ...(location !== undefined && { location }),
             ...(memberPrice !== undefined && { memberPrice: Math.round(memberPrice * 100) }),
-            ...(guestPrice !== undefined && { guestPrice: Math.round(guestPrice * 100) })
+            ...(guestPrice !== undefined && { guestPrice: Math.round(guestPrice * 100) }),
+            ...(signupOpen !== undefined && { signupOpen })
         })
         .where(eq(events.id, id));
 

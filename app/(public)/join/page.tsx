@@ -1,5 +1,5 @@
 import { getJoinPageContent } from "@/lib/queries";
-import { getCurrentSeason, getUpcomingEvents } from "@/lib/queries";
+import { getCurrentSeason, getOpenUpcomingEvents } from "@/lib/queries";
 import UpcomingEvents from "@/components/public/calendar/UpcomingEvents";
 import LinkedText from "@/components/shared/LinkedText";
 
@@ -33,9 +33,7 @@ function DownloadButton({ url, label }: { url: string | null | undefined; label:
 
 export default async function JoinPage() {
     const [content, currentSeason] = await Promise.all([getJoinPageContent(), getCurrentSeason()]);
-    const upcomingEvents = currentSeason ? await getUpcomingEvents(currentSeason.id) : [];
-    const upcomingSport = upcomingEvents.find((event) => event.type === "sport") ?? null;
-    const upcomingDefi = upcomingEvents.find((event) => event.type === "defi") ?? null;
+    const upcomingEvents = currentSeason ? await getOpenUpcomingEvents(currentSeason.id) : [];
 
     return (
         <div className="px-4 sm:px-6 md:px-12 py-10 sm:py-16 flex flex-col gap-12 sm:gap-16">
@@ -112,16 +110,10 @@ export default async function JoinPage() {
             </section>
 
             <UpcomingEvents
-                upcomingSport={
-                    upcomingSport
-                        ? { ...upcomingSport, date: upcomingSport.date ? new Date(upcomingSport.date).toISOString() : null }
-                        : null
-                }
-                upcomingDefi={
-                    upcomingDefi
-                        ? { ...upcomingDefi, date: upcomingDefi.date ? new Date(upcomingDefi.date).toISOString() : null }
-                        : null
-                }
+                events={upcomingEvents.map((event) => ({
+                    ...event,
+                    date: event.date ? new Date(event.date).toISOString() : null
+                }))}
             />
         </div>
     );

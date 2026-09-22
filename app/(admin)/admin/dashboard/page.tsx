@@ -11,6 +11,7 @@ const cards = [
     { label: "Comité", href: "/admin/committee", description: "Gérer les membres du comité" },
     { label: "Actualités", href: "/admin/news", description: "Créer et éditer les actualités" },
     { label: "Saison + Classement", href: "/admin/leaderboard", description: "Gérer les saisons et résultats" },
+    { label: "Inscriptions", href: "/admin/signups", description: "Voir toutes les inscriptions aux événements" },
     { label: "Membres", href: "/admin/members", description: "Gérer les membres" },
     { label: "Contact", href: "/admin/contact", description: "Voir et répondre aux messages de contact" }
 ];
@@ -142,6 +143,9 @@ export default async function AdminDashboardPage() {
                                                     <p className="text-xs text-gray-400">
                                                         {signup.user?.email ?? signup.guest?.email ?? ""}
                                                     </p>
+                                                    {signup.guest?.phone && (
+                                                        <p className="text-xs text-gray-400">{signup.guest.phone}</p>
+                                                    )}
                                                 </div>
                                                 <span
                                                     className={`text-xs px-2 py-0.5 rounded-full font-medium ${

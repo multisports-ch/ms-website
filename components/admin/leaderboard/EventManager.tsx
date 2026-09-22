@@ -11,6 +11,7 @@ interface Event {
     location: string | null;
     memberPrice: number | null;
     guestPrice: number | null;
+    signupOpen: boolean;
 }
 
 interface Props {
@@ -26,7 +27,8 @@ const emptyForm = {
     time: "",
     location: "",
     memberPrice: "",
-    guestPrice: ""
+    guestPrice: "",
+    signupOpen: true
 };
 
 export default function EventManager({ seasonId, selectedEventId, onSelectEvent }: Props) {
@@ -64,7 +66,8 @@ export default function EventManager({ seasonId, selectedEventId, onSelectEvent 
             time: event.time ?? "",
             location: event.location ?? "",
             memberPrice: event.memberPrice ? (event.memberPrice / 100).toString() : "",
-            guestPrice: event.guestPrice ? (event.guestPrice / 100).toString() : ""
+            guestPrice: event.guestPrice ? (event.guestPrice / 100).toString() : "",
+            signupOpen: event.signupOpen
         });
     }
 
@@ -81,7 +84,8 @@ export default function EventManager({ seasonId, selectedEventId, onSelectEvent 
             time: form.time || null,
             location: form.location || null,
             memberPrice: form.memberPrice ? parseFloat(form.memberPrice) : null,
-            guestPrice: form.guestPrice ? parseFloat(form.guestPrice) : null
+            guestPrice: form.guestPrice ? parseFloat(form.guestPrice) : null,
+            signupOpen: form.signupOpen
         };
 
         await fetch("/api/admin/leaderboard/events", {
@@ -180,6 +184,15 @@ export default function EventManager({ seasonId, selectedEventId, onSelectEvent 
                                 />
                             </div>
                         </div>
+                        <label className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700">
+                            <input
+                                type="checkbox"
+                                checked={form.signupOpen}
+                                onChange={(e) => setForm({ ...form, signupOpen: e.target.checked })}
+                                className="h-4 w-4 accent-blue-600"
+                            />
+                            Inscriptions ouvertes aux membres et invités
+                        </label>
                         <input
                             type="text"
                             value={form.location}
@@ -278,6 +291,13 @@ export default function EventManager({ seasonId, selectedEventId, onSelectEvent 
                                                     · {event.location}
                                                 </span>
                                             )}
+                                            <span
+                                                className={`text-xs font-medium ${
+                                                    event.signupOpen ? "text-green-600" : "text-red-500"
+                                                }`}
+                                            >
+                                                {event.signupOpen ? "Inscriptions ouvertes" : "Inscriptions fermées"}
+                                            </span>
                                         </div>
                                         {(event.memberPrice || event.guestPrice) && (
                                             <p className="text-xs text-gray-400 mt-0.5">

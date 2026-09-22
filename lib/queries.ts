@@ -124,6 +124,19 @@ export const getUpcomingEvents = unstable_cache(
     { revalidate: 3600, tags: ["events"] }
 );
 
+export const getOpenUpcomingEvents = unstable_cache(
+    async (seasonId: string) => {
+        const now = new Date();
+        return db
+            .select()
+            .from(events)
+            .where(and(eq(events.seasonId, seasonId), eq(events.signupOpen, true), gte(events.date, now)))
+            .orderBy(events.date);
+    },
+    ["open-upcoming-events"],
+    { revalidate: 60, tags: ["events"] }
+);
+
 export const getSeasonEventsAll = unstable_cache(
     async (seasonId: string) => {
         return db.select().from(events).where(eq(events.seasonId, seasonId)).orderBy(events.date);

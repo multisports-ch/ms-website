@@ -10,6 +10,7 @@ const navItems = [
     { label: "Comité", href: "/admin/committee" },
     { label: "Actualités", href: "/admin/news" },
     { label: "Saisons & Classement", href: "/admin/leaderboard" },
+    { label: "Inscriptions", href: "/admin/signups" },
     { label: "Membres", href: "/admin/members" },
     { label: "Contact", href: "/admin/contact" }
 ];

@@ -13,6 +13,7 @@ type Status = "idle" | "sending" | "success" | "error";
 export default function GuestSignupModal({ eventId, eventName, onClose }: Props) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [status, setStatus] = useState<Status>("idle");
     const [errorMsg, setErrorMsg] = useState("");
     const [emailSent, setEmailSent] = useState(false);
@@ -25,7 +26,7 @@ export default function GuestSignupModal({ eventId, eventName, onClose }: Props)
         const res = await fetch(`/api/events/${eventId}/guest-signup`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email })
+            body: JSON.stringify({ name, email, phone })
         });
 
         const data = await res.json();
@@ -112,6 +113,21 @@ export default function GuestSignupModal({ eventId, eventName, onClose }: Props)
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     placeholder="jean@example.com"
+                                    className="border border-border rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-sm font-semibold text-foreground">
+                                    Téléphone <span style={{ color: "var(--accent)" }}>*</span>
+                                </label>
+                                <input
+                                    type="tel"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    required
+                                    placeholder="079 123 45 67"
+                                    autoComplete="tel"
                                     className="border border-border rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                                 />
                             </div>

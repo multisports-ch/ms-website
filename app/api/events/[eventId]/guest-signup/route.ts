@@ -16,11 +16,12 @@ function escapeHtml(value: string): string {
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
     const { eventId } = await params;
-    const { name, email: rawEmail } = await req.json();
+    const { name, email: rawEmail, phone: rawPhone } = await req.json();
     const email = typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : "";
+    const phone = typeof rawPhone === "string" ? rawPhone.trim() : "";
 
-    if (typeof name !== "string" || !name.trim() || !email) {
-        return NextResponse.json({ error: "Nom et email requis." }, { status: 400 });
+    if (typeof name !== "string" || !name.trim() || !email || !phone) {
+        return NextResponse.json({ error: "Nom, email et téléphone requis." }, { status: 400 });
     }
 
     // Check event exists
@@ -28,6 +29,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ eve
 
     if (!event[0]) {
         return NextResponse.json({ error: "Événement introuvable." }, { status: 404 });
+    }
+
+    if (!event[0].signupOpen) {
+        return NextResponse.json({ error: "Les inscriptions sont fermées." }, { status: 403 });
     }
 
     // Find or create guest
@@ -40,8 +45,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ eve
     let guestId: string;
     if (guest[0]) {
         guestId = guest[0].id;
+        await db.update(guests).set({ name: name.trim(), phone }).where(eq(guests.id, guestId));
     } else {
-        const newGuest = await db.insert(guests).values({ name: name.trim(), email }).returning();
+        const newGuest = await db.insert(guests).values({ name: name.trim(), email, phone }).returning();
         guestId = newGuest[0].id;
     }
 

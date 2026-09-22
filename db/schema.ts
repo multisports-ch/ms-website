@@ -80,7 +80,8 @@ export const events = pgTable("events", {
     time: text("time"),
     location: text("location"),
     memberPrice: integer("member_price"),
-    guestPrice: integer("guest_price")
+    guestPrice: integer("guest_price"),
+    signupOpen: boolean("signup_open").notNull().default(true)
 });
 
 // ============================================================
@@ -92,7 +93,8 @@ export const guests = pgTable("guests", {
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
-    email: text("email")
+    email: text("email"),
+    phone: text("phone")
 });
 
 // ============================================================

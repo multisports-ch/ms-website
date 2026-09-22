@@ -10,14 +10,16 @@ interface Event {
     time: string | null;
     location: string | null;
     memberPrice: number | null;
+    signupOpen: boolean;
 }
 
 interface Props {
     event: Event;
     isSignedUp: boolean;
+        canSignup: boolean;
 }
 
-export default function MemberEventSignup({ event, isSignedUp: initialSignedUp }: Props) {
+    export default function MemberEventSignup({ event, isSignedUp: initialSignedUp, canSignup }: Props) {
     const [isSignedUp, setIsSignedUp] = useState(initialSignedUp);
     const [loading, setLoading] = useState(false);
 
@@ -67,13 +69,17 @@ export default function MemberEventSignup({ event, isSignedUp: initialSignedUp }
 
             <button
                 onClick={handleToggle}
-                disabled={loading}
+                disabled={loading || !canSignup}
                 className={`shrink-0 ml-4 px-4 py-2 rounded-xl text-sm font-bold transition-all disabled:opacity-50 ${
                     isSignedUp ? "bg-red-100 text-red-600 hover:bg-red-200" : "text-white hover:opacity-90"
                 }`}
                 style={!isSignedUp ? { backgroundColor: "var(--primary)" } : {}}
             >
-                {loading ? (
+                {!event.signupOpen ? (
+                    "Fermées"
+                ) : !canSignup ? (
+                    "Terminé"
+                ) : loading ? (
                     <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin block" />
                 ) : isSignedUp ? (
                     "Se désinscrire"

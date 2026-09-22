@@ -1,5 +1,5 @@
 import { getCurrentSeason } from "@/lib/queries";
-import { getUpcomingEvents, getSeasonEventsAll, getVisibleNews } from "@/lib/queries";
+import { getOpenUpcomingEvents, getSeasonEventsAll, getVisibleNews } from "@/lib/queries";
 import UpcomingEvents from "@/components/public/calendar/UpcomingEvents";
 import NewsCard from "@/components/public/NewsCard";
 
@@ -7,13 +7,10 @@ export default async function CalendarPage() {
     const currentSeason = await getCurrentSeason();
 
     const [upcomingEvents, allEvents, newsItems] = await Promise.all([
-        currentSeason ? getUpcomingEvents(currentSeason.id) : Promise.resolve([]),
+        currentSeason ? getOpenUpcomingEvents(currentSeason.id) : Promise.resolve([]),
         currentSeason ? getSeasonEventsAll(currentSeason.id) : Promise.resolve([]),
         getVisibleNews()
     ]);
-
-    const upcomingSport = upcomingEvents.find((e) => e.type === "sport") ?? null;
-    const upcomingDefi = upcomingEvents.find((e) => e.type === "defi") ?? null;
 
     return (
         <div className="px-6 md:px-12 py-16 flex flex-col gap-16">
@@ -30,22 +27,10 @@ export default async function CalendarPage() {
 
             {/* Upcoming events */}
             <UpcomingEvents
-                upcomingSport={
-                    upcomingSport
-                        ? {
-                              ...upcomingSport,
-                              date: upcomingSport.date ? new Date(upcomingSport.date).toISOString() : null
-                          }
-                        : null
-                }
-                upcomingDefi={
-                    upcomingDefi
-                        ? {
-                              ...upcomingDefi,
-                              date: upcomingDefi.date ? new Date(upcomingDefi.date).toISOString() : null
-                          }
-                        : null
-                }
+                events={upcomingEvents.map((event) => ({
+                    ...event,
+                    date: event.date ? new Date(event.date).toISOString() : null
+                }))}
             />
 
             {/* Season schedule table */}
