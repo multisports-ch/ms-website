@@ -1,38 +1,43 @@
 import { db } from "@/db";
 import { eventResults, events, seasonLeaderboard } from "@/db/schema";
-import { and, eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export async function recomputeSeasonLeaderboard(seasonId: string) {
-    // Fetch all event results for the season and keep each member's best 6 scores
+    // Fetch all sport and défi results; only sport results are capped at six.
     const allResults = await db
         .select({
             userId: eventResults.userId,
-            points: eventResults.points
+            points: eventResults.points,
+            type: events.type
         })
         .from(eventResults)
         .innerJoin(events, eq(eventResults.eventId, events.id))
-        .where(and(eq(events.seasonId, seasonId), eq(events.type, "sport")))
+        .where(eq(events.seasonId, seasonId))
         .orderBy(eventResults.userId);
 
-    const totalsByUser = new Map<string, number[]>();
+    const sportsByUser = new Map<string, number[]>();
+    const defisByUser = new Map<string, number[]>();
 
     for (const row of allResults) {
         if (!row.userId) continue;
 
-        const existingPoints = totalsByUser.get(row.userId) ?? [];
-        existingPoints.push(Number(row.points ?? 0));
-        totalsByUser.set(row.userId, existingPoints);
+        const scoresByUser = row.type === "sport" ? sportsByUser : defisByUser;
+        const points = scoresByUser.get(row.userId) ?? [];
+        points.push(Number(row.points ?? 0));
+        scoresByUser.set(row.userId, points);
     }
 
-    const aggregated = Array.from(totalsByUser.entries())
-        .map(([userId, points]) => {
-            const bestSix = [...points]
+    const userIds = new Set([...sportsByUser.keys(), ...defisByUser.keys()]);
+    const aggregated = Array.from(userIds)
+        .map((userId) => {
+            const bestSixSports = (sportsByUser.get(userId) ?? [])
                 .sort((a, b) => b - a)
                 .slice(0, 6);
+            const allDefis = defisByUser.get(userId) ?? [];
 
             return {
                 userId,
-                totalPoints: bestSix.reduce((sum, point) => sum + point, 0)
+                totalPoints: [...bestSixSports, ...allDefis].reduce((sum, point) => sum + point, 0)
             };
         })
         .sort((a, b) => b.totalPoints - a.totalPoints || a.userId.localeCompare(b.userId));
@@ -40,12 +45,10 @@ export async function recomputeSeasonLeaderboard(seasonId: string) {
     // Assign ranks (handle ties — same points = same rank)
     let currentRank = 1;
     const ranked = aggregated.map((row, index) => {
-        if (index < aggregated.length - 1 && row.totalPoints > aggregated[index + 1].totalPoints) {
+        if (index > 0 && row.totalPoints !== aggregated[index - 1].totalPoints) {
             currentRank = index + 1;
         }
-        if (index == aggregated.length - 1 && row.totalPoints < aggregated[index - 1].totalPoints) {
-            currentRank = index + 1;
-        }
+
         return {
             seasonId,
             userId: row.userId,
